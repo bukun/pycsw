@@ -3,246 +3,583 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pycsw 2.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-23 21:42+0800\n"
+"POT-Creation-Date: 2017-05-29 21:54+0800\n"
 "PO-Revision-Date: 2016-06-08 16:56+0800\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Last-Translator: \n"
+"Language: zh_Hans_CN\n"
 "Language-Team: \n"
-"Language: zh_CN\n"
-"X-Generator: Poedit 1.8.7\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.4.0\n"
 
 #: ../../testing.rst:4
 msgid "Testing"
 msgstr "测试"
 
-#: ../../testing.rst:9
+#: ../../testing.rst:6
+msgid ""
+"Pycsw uses `pytest`_ for managing its automated tests. There are a number"
+" of test suites that perform mostly functional testing. These tests "
+"ensure that pycsw is compliant with the various supported standards. "
+"There is also a growing set of unit tests. These focus on smaller scope "
+"testing, in order to verify that individual bits of code are working as "
+"expected."
+msgstr ""
+
+#: ../../testing.rst:13
+msgid ""
+"Tests can be run locally as part of the development cycle. They are also "
+"run on pycsw's `Travis`_ continuous integration server against all pushes"
+" and pull requests to the code repository."
+msgstr ""
+
+#: ../../testing.rst:21
 msgid "OGC CITE"
 msgstr "OGC引用"
 
-#: ../../testing.rst:11
-msgid ""
-"Compliance benchmarking is done via the OGC `Compliance & Interoperability "
-"Testing & Evaluation Initiative`_.  The pycsw `wiki <https://github.com/"
-"geopython/pycsw/wiki/OGC-CITE-Compliance>`_ documents testing procedures "
-"and status."
-msgstr ""
-"合规性基准是通过OGC `合规性和互操作性测试与自发性评估`_ 完成的。该pycsw维基"
-" `<https://github.com/geopython/pycsw/wiki/OGC-CITE-Compliance>`_ 文档测试程序和状态。"
-
-#: ../../testing.rst:16
-msgid "Tester"
-msgstr "测试仪"
-
-#: ../../testing.rst:18
-msgid ""
-"The pycsw tests framework (in ``tests``) is a collection of testsuites to "
-"perform automated regession testing of the codebase.  Test are run against "
-"all pushes to the GitHub repository via `Travis CI`_."
-msgstr ""
-"该pycsw测试框架（在 ``tests`` 里）是测试包的集合体，用来执行代码库的自动"
-"regession测试。通过 `Travis CI`_ ，测试在GitHub的库中运行。"
-
-#: ../../testing.rst:21
-msgid "Running Locally"
-msgstr "本地运行"
-
 #: ../../testing.rst:23
 msgid ""
-"The tests framework can be run from ``tests`` using `Paver`_ (see "
-"``pavement.py``) tasks for convenience:"
+"In addition to pycsw's own tests, all public releases are also tested via"
+" the OGC `Compliance & Interoperability Testing & Evaluation Initiative`_"
+" (CITE). The pycsw `wiki`_ documents CITE testing procedures and status."
 msgstr ""
-"为方便工作，测试框架可以用 `Paver`_ (见 ``pavement.py``) 在 ``tests`` 中运行："
 
-#: ../../testing.rst:35
-msgid ""
-"The tests perform HTTP GET and POST requests against ``http://"
-"localhost:8000``.  The expected output for each test can be found in "
-"``expected``.  Results are categorized as ``passed``, ``failed``, or "
-"``initialized``.  A summary of results is output at the end of the run."
+#: ../../testing.rst:29
+msgid "Functional test suites"
 msgstr ""
-"针对 ``http://localhost:8000``，测试执行HTTP GET和POST请求。每个测试的输出都"
-"在``expected``中。结果被归类为``通过``，``失败``，或``初始化``。总结的结果会"
-"在运行结束时输出。"
+
+#: ../../testing.rst:31
+msgid ""
+"Currently most of pycsw's tests are `functional tests`_. This means that "
+"each test case is based on the requirements mandated by the "
+"specifications of the various standards that pycsw implements. These "
+"tests focus on making sure that pycsw works as expected."
+msgstr ""
+
+#: ../../testing.rst:36
+msgid "Each test follows the same workflow:"
+msgstr ""
 
 #: ../../testing.rst:38
-msgid "Failed Tests"
-msgstr "测试失败"
-
-#: ../../testing.rst:40
 msgid ""
-"If a given test has failed, the output is saved in ``results``.  The "
-"resulting failure can be analyzed by running ``diff tests/expected/"
-"name_of_test.xml tests/results/name_of_test.xml`` to find variances.  The "
-"Paver task returns a status code which indicates the number of tests which "
-"have failed (i.e. ``echo $?``)."
+"Create a new pycsw instance with a custom configuration and data "
+"repository for each suite of tests;"
 msgstr ""
-"如果某个测试失败，输出将保存在``结果``中。 运行``diff tests/expected/"
-"name_of_test.xml tests/results/name_of_test.xml`` ，会自动统计失败结果以找到"
-"差异。Paver任务会返回一个状态代码，表示已失败的测试数目（即``echo $?``）。"
+
+#: ../../testing.rst:41
+msgid "Perform a series of GET and POST requests to the running pycsw instance;"
+msgstr ""
 
 #: ../../testing.rst:43
-msgid "Test Suites"
-msgstr "测试套件"
-
-#: ../../testing.rst:45
 msgid ""
-"The tests framework is run against a series of 'suites' (in ``tests/"
-"suites``), each of which specifies a given configuration to test various "
-"functionality of the codebase.  Each suite is structured as follows:"
+"Compare the results of each request against a previously prepared "
+"expected result. If the test result matches the expected outcome the test"
+" passes, otherwise it fails."
 msgstr ""
-"测试框架将针对一系列“套件”（在``测试/ suites``）完成运行，其中每一项均指定一"
-"个给定的配置，以测试基本代码的各种功能。每个套件的结构如下："
-
-#: ../../testing.rst:47
-msgid "``tests/suites/suite/default.cfg``: the configuration for the suite"
-msgstr "`tests/suites/suite/default.cfg`：对于该套件的配置"
 
 #: ../../testing.rst:48
 msgid ""
-"``tests/suites/suite/post``: directory of XML documents for HTTP POST "
-"requests"
-msgstr "`tests/suites/suite/post`：XML文档目录的HTTP POST请求"
-
-#: ../../testing.rst:49
-msgid ""
-"``tests/suites/suite/get/requests.txt``: directory and text file of KVP for "
-"HTTP GET requests"
+"A number of different test suites exist under "
+"``tests/functionaltests/suites``. Each suite specifies the following "
+"structure:"
 msgstr ""
-"`tests/suites/suite/get/requests.txt`：KVP的目录和文本文件，用于HTTP GET请求"
 
-#: ../../testing.rst:50
+#: ../../testing.rst:51
 msgid ""
-"``tests/suites/suite/data``: directory of sample XML data required for the "
-"test suite.  Database and test data are setup/loaded automatically as part "
-"of testing"
+"A mandatory ``default.cfg`` file with the pycsw configuration that must "
+"be used by the test suite;"
 msgstr ""
-"`tests/suites/suite/data`：测试套件所需样本的XML数据目录。作为测试的一部分，"
-"数据库和测试数据是自动设置或自动加载的"
-
-#: ../../testing.rst:52
-msgid "When the tests are invoked, the following operations are run:"
-msgstr "当测试被调用，将执行以下操作："
 
 #: ../../testing.rst:54
-msgid "pycsw configuration is set to ``tests/suites/suite/default.cfg``"
-msgstr "pycsw配置设置为`tests/suites/suite/default.cfg`"
-
-#: ../../testing.rst:55
-msgid "HTTP POST requests are run against ``tests/suites/suite/post/*.xml``"
-msgstr "HTTP POST请求是针对 `tests/suites/suite/post/*.xml` 运行的"
-
-#: ../../testing.rst:56
 msgid ""
-"HTTP GET requests are run against each request in ``tests/suites/suite/get/"
-"requests.txt``"
-msgstr "HTTP GET请求是针对 ``tests/suites/suite/get/requests.txt`` 运行的"
-
-#: ../../testing.rst:58
-msgid ""
-"The CSV format of ``tests/suites/suite/get/requests.txt`` is ``testname,"
-"request``, with one line for each test.  The ``testname`` value is a unique "
-"test name (this value sets the name of the output file in the test "
-"results).  The ``request`` value is the HTTP GET request.  The "
-"``PYCSW_SERVER`` token is replaced at runtime with the URL to the pycsw "
-"install."
+"A mandatory ``expected/`` directory containing the expected results for "
+"each request;"
 msgstr ""
-"在每项测试的第一行中， `tests/suites/suite/get/requests.txt` 的CSV格式是 "
-" `testname,request` 。该 ``testname`` 值是唯一的测试名（此值设置在测试结果输出文"
-"件的名称内）。该 ``request`` 值是HTTP GET请求的值。该 ``PYCSW_SERVER`` 在URL "
-"pycsw安装运行时会被替换掉的。"
 
-#: ../../testing.rst:61
-msgid "Adding New Tests"
-msgstr "添加新测试"
+#: ../../testing.rst:57
+msgid ""
+"An optional ``data/`` directory that contains ``.xml`` files with testing"
+" data that is to be loaded into the suite's database before running the "
+"tests. The presence of this directory and its contents have the following"
+" meaning for tests:"
+msgstr ""
 
-#: ../../testing.rst:63
-msgid "To add tests to an existing suite:"
-msgstr "在现有套件中添加测试："
+#: ../../testing.rst:62
+msgid ""
+"If ``data/`` directory is present and contains files, they will be loaded"
+" into a new database for running the tests of the suite;"
+msgstr ""
 
 #: ../../testing.rst:65
-msgid "for HTTP POST tests, add XML documents to ``tests/suites/suite/post``"
-msgstr "对于HTTP POST测试，在 ``tests/suites/suite/post`` 添加XML文档"
-
-#: ../../testing.rst:66
 msgid ""
-"for HTTP GET tests, add tests (one per line) to ``tests/suites/suite/get/"
-"requests.txt``"
+"If ``data/`` directory is present and does not contain any data files, a "
+"new empty database is used in the tests;"
 msgstr ""
-"对于HTTP GET测试，在 ``tests/suites/suite/get/requests.txt`` 中添加测试（每行的第一项）"
 
-#: ../../testing.rst:67
-msgid "run ``paver test``"
-msgstr "运行`paver test`"
-
-#: ../../testing.rst:69
-msgid "To add a new test suite:"
-msgstr "添加新的测试套件："
+#: ../../testing.rst:68
+msgid ""
+"If ``data/`` directory is absent, the suite will use a database populated"
+" with test data from the ``CITE`` suite."
+msgstr ""
 
 #: ../../testing.rst:71
-msgid "create a new directory under ``tests/suites`` (e.g. ``foo``)"
-msgstr "在 ``tests/suites`` （如 ``foo`` )下创建一个新目录"
-
-#: ../../testing.rst:72
-msgid "create a new configuration in ``tests/suites/foo/default.cfg``"
-msgstr "在 ``tests/suites/foo/default.cfg`` 创建一个新的配置"
+msgid ""
+"An optional ``get/requests.txt`` file that holds request parameters used "
+"for making HTTP GET requests."
+msgstr ""
 
 #: ../../testing.rst:74
-msgid "Ensure that all file paths are relative to ``path/to/pycsw``"
-msgstr "确保所有文件的路径都关联 ``path/to/pycsw`` "
-
-#: ../../testing.rst:75
-msgid ""
-"Ensure that ``repository.database`` points to an SQLite3 database called "
-"``tests/suites/foo/data/records.db``.  The database *must* be called "
-"``records.db`` and the directory ``tests/suites/foo/data`` *must* exist"
+msgid "Each line in the file must be formatted with the following scheme:"
 msgstr ""
-"确保 ``repository.database`` 指定于 ``tests/suites/foo/data/records.db`` 的一个"
-"sqlite3数据库。该数据库*必须*被写为 ``records.db``，目录 ``tests/suites/foo/data`` "
-"也必须存在"
 
-#: ../../testing.rst:77
-msgid "populate HTTP POST requests in ``tests/suites/foo/post``"
-msgstr "将HTTP POST请求移到 ``tests/suites/foo/post`` "
-
-#: ../../testing.rst:78
-msgid "populate HTTP GET requests in ``tests/suites/foo/get/requests.txt``"
-msgstr "将HTTP GET请求移到 ``tests/suites/foo/get/requests.txt`` "
-
-#: ../../testing.rst:79
-msgid ""
-"if the testsuite requires test data, create ``tests/suites/foo/data`` are "
-"store XML file there"
+#: ../../testing.rst:76
+msgid "test_id,request_query_string"
 msgstr ""
-"如果需要测试组件的测试数据，创建 ``tests/suites/foo/data``，以存储XML文件"
+
+#: ../../testing.rst:78 ../../testing.rst:96
+msgid "For example:"
+msgstr ""
 
 #: ../../testing.rst:80
-msgid ""
-"run ``paver test`` (or ``paver test -s foo`` to test only the new test "
-"suite)"
-msgstr "运行 ``paver test`` （或 ``paver test-s foo`` ， 仅用来测试新的测试套件）"
+msgid "TestGetCapabilities,service=CSW&version=2.0.2&request=GetCapabilities"
+msgstr ""
 
 #: ../../testing.rst:82
 msgid ""
-"The new test suite database will be created automatically and used as part "
-"of tests."
-msgstr "新的测试套件数据库将自动创建，并且会成为测试的一部分。"
+"When tests are run, the *test_id* is used for naming each test and for "
+"finding the expected result."
+msgstr ""
 
 #: ../../testing.rst:85
+msgid ""
+"An optional ``post/`` directory that holds ``.xml`` files used for making"
+" HTTP POST requests"
+msgstr ""
+
+#: ../../testing.rst:90
+msgid "Test identifiers"
+msgstr ""
+
+#: ../../testing.rst:92
+msgid "Each test has an identifier that is built using the following rule:"
+msgstr ""
+
+#: ../../testing.rst:94
+msgid "<test_function>[<suite_name>_<http_method>_<test_name>]"
+msgstr ""
+
+#: ../../testing.rst:98
+msgid "test_suites[default_post_GetRecords-end]"
+msgstr ""
+
+#: ../../testing.rst:102
+msgid "Functional tests' implementation"
+msgstr ""
+
+#: ../../testing.rst:104
+msgid ""
+"Functional tests are generated for each suite directory present under "
+"`tests/functionaltests/suites`. Test generation uses pytest's "
+"`pytest_generate_tests`_ function. This function is implemented in "
+"`tests/functionaltests/conftest.py`. It provides an automatic "
+"parametrization of the "
+"`tests/functionaltests/test_suites_functional:test_suites` function. This"
+" parametrization causes the generation of a test for each of the GET and "
+"POST requests defined in a suite's directory."
+msgstr ""
+
+#: ../../testing.rst:114
+msgid "Adding New Tests"
+msgstr "添加新测试"
+
+#: ../../testing.rst:116
+msgid "To add tests to an existing suite:"
+msgstr "在现有套件中添加测试："
+
+#: ../../testing.rst:118
+msgid ""
+"for HTTP POST tests, add XML documents to "
+"``tests/functionaltests/suites/<suite>/post``"
+msgstr "对于HTTP POST测试，在 ``tests/functionaltests/suites/<suite>/post`` 添加XML文档"
+
+#: ../../testing.rst:120
+msgid ""
+"for HTTP GET tests, add tests (one per line) to "
+"``tests/functionaltests/suites/<suite>/get/requests.txt``"
+msgstr "对于HTTP GET测试，在 ``tests/functionaltests/suites/<suite>/get/requests.txt`` 中添加测试（每行的第一项）"
+
+#: ../../testing.rst:123
+msgid "To add a new test suite:"
+msgstr "添加新的测试套件："
+
+#: ../../testing.rst:125
+msgid ""
+"Create a new directory under ``tests/functionaltests/suites`` (e.g. "
+"``foo``)"
+msgstr "在 ``tests/functionaltests/suites`` （如 ``foo`` )下创建一个新目录"
+
+#: ../../testing.rst:126
+msgid "Create a new configuration in ``tests/suites/foo/default.cfg``"
+msgstr "在 ``tests/suites/foo/default.cfg`` 创建一个新的配置"
+
+#: ../../testing.rst:127
+msgid "Populate HTTP POST requests in ``tests/suites/foo/post``"
+msgstr "在 ``tests/suites/foo/post`` 填写HTTP POST请求"
+
+#: ../../testing.rst:128
+msgid "Populate HTTP GET requests in ``tests/suites/foo/get/requests.txt``"
+msgstr "在 ``tests/suites/foo/get/requests.txt`` 填写HTTP GET请求"
+
+#: ../../testing.rst:129
+msgid ""
+"If the test suite requires test data, create ``tests/suites/foo/data`` "
+"and store XML files there. These will be inserted in the test catalogue "
+"at test runtime"
+msgstr "如果需要测试组件的测试数据，创建 ``tests/suites/foo/data``，以存储XML文件。"
+"这会在运行时插入到测试目录。"
+
+#: ../../testing.rst:132
+msgid "Use pytest or tox as described above in order to run the tests"
+msgstr ""
+
+#: ../../testing.rst:134
+msgid ""
+"The new test suite database will be created automatically and used as "
+"part of tests."
+msgstr "新的测试套件数据库将自动创建，并且会成为测试的一部分。"
+
+#: ../../testing.rst:139
+msgid "Unit tests"
+msgstr ""
+
+#: ../../testing.rst:141
+msgid ""
+"pycsw also features unit tests. These deal with testing the expected "
+"behaviour of individual functions."
+msgstr ""
+
+#: ../../testing.rst:144
+msgid ""
+"The usual implementation of unit tests is to import the function/method "
+"under test, run it with a set of known arguments and assert that the "
+"result matches the expected outcome."
+msgstr ""
+
+#: ../../testing.rst:148
+msgid "Unit tests are defined in `pycsw/tests/unittests/<module_name>`."
+msgstr ""
+
+#: ../../testing.rst:150
+msgid ""
+"pycsw's unit tests are marked with the `unit` marker. This makes it easy "
+"to run them in isolation:"
+msgstr ""
+
+#: ../../testing.rst:161
+msgid "Running tests"
+msgstr ""
+
+#: ../../testing.rst:163
+msgid ""
+"Since pycsw uses `pytest`_, tests are run with the ``py.test`` runner. A "
+"basic test run can be made with:"
+msgstr ""
+
+#: ../../testing.rst:170
+msgid ""
+"This command will run all tests and report on the number of successes, "
+"failures and also the time it took to run them. The `py.test` command "
+"accepts several additional parameters that can be used in order to "
+"customize the execution of tests. Look into `pytest's invocation "
+"documentation`_ for a more complete description. You can also get a "
+"description of the available parameters by running:"
+msgstr ""
+
+#: ../../testing.rst:183
+msgid "Running specific suites and test cases"
+msgstr ""
+
+#: ../../testing.rst:185
+msgid ""
+"py.test allows tagging tests with markers. These can be used to "
+"selectively run some tests. pycsw uses two markers:"
+msgstr ""
+
+#: ../../testing.rst:188
+msgid "``unit`` - run only inut tests"
+msgstr ""
+
+#: ../../testing.rst:189
+msgid "``functional``- run onyl functional tests"
+msgstr ""
+
+#: ../../testing.rst:191
+msgid "Markers can be specified by using the ``-m <marker_name>`` flag."
+msgstr ""
+
+#: ../../testing.rst:197
+msgid ""
+"You can also use the ``-k <name_expression>`` flag to select which tests "
+"to run. Since each test's name includes the suite name, http method and "
+"an identifier for the test, it is easy to run only certain tests."
+msgstr ""
+
+#: ../../testing.rst:208
+msgid "The ``-m`` and ``-k`` flags can be combined."
+msgstr ""
+
+#: ../../testing.rst:212
+msgid "Exiting fast"
+msgstr ""
+
+#: ../../testing.rst:214
+msgid ""
+"The ``--exitfirst`` (or ``-x``) flag can be used to stop the test runner "
+"immediately as soon as a test case fails."
+msgstr ""
+
+#: ../../testing.rst:223
+msgid "Seeing more output"
+msgstr ""
+
+#: ../../testing.rst:225
+msgid "There are three main ways to get more output from running tests:"
+msgstr ""
+
+#: ../../testing.rst:227
+msgid "The ``--verbose`` (or ``-v``) flag;"
+msgstr ""
+
+#: ../../testing.rst:229
+msgid ""
+"The ``--capture=no`` flag - Messages sent to stdout by a test are not "
+"suppressed;"
+msgstr ""
+
+#: ../../testing.rst:232
+msgid ""
+"The ``--pycsw-loglevel`` flag - Sets the log level of the pycsw instance "
+"under test. Set this value to ``debug`` in order to see all debug "
+"messages sent by pycsw while processing a request."
+msgstr ""
+
+#: ../../testing.rst:245
+msgid "Test coverage"
+msgstr ""
+
+#: ../../testing.rst:247
+msgid ""
+"Use the `--cov pycsw` flag in order to see information on code coverage. "
+"It is possible to get output in a variety of formats."
+msgstr ""
+
+#: ../../testing.rst:256
+msgid "Specifying a timeout for tests"
+msgstr ""
+
+#: ../../testing.rst:258
+msgid ""
+"The `--timeout <seconds>` option can be used to specify that if a test "
+"takes more than `<seconds>` to run it is considered to have failed. "
+"Seconds can be a float, so it is possibe to specify sub-second timeouts"
+msgstr ""
+
+#: ../../testing.rst:268
+msgid "Linting with flake8"
+msgstr ""
+
+#: ../../testing.rst:270
+msgid ""
+"Use the `--flake8` flag to also check if the code complies with Python's "
+"style guide"
+msgstr ""
+
+#: ../../testing.rst:279
+msgid "Testing multiple python versions"
+msgstr ""
+
+#: ../../testing.rst:281
+msgid ""
+"For testing multiple python versions and configurations simultaneously "
+"you can use `tox`_. pycsw includes a `tox.ini` file with a suitable "
+"configuration. It can be used to run tests against multiple python "
+"versions and also multiple database backends. When running `tox` you can "
+"send arguments to the `py.test` runner by using the invocation `tox <tox "
+"arguments> -- <py.test arguments>`. Examples:"
+msgstr ""
+
+#: ../../testing.rst:305
 msgid "Web Testing"
 msgstr "Web测试"
 
-#: ../../testing.rst:87
+#: ../../testing.rst:307
 msgid ""
 "You can also use the pycsw tests via your web browser to perform sample "
-"requests against your pycsw install.  The tests are is located in ``tests/"
-"``.  To generate the HTML page:"
-msgstr ""
-"您还可以通过Web浏览器使用pycsw测试，来执行你的pycsw安装样例申请。这些测试在"
-"``tests/`` 中。生成HTML页面："
+"requests against your pycsw install.  The tests are is located in "
+"``tests/``.  To generate the HTML page:"
+msgstr "您还可以通过Web浏览器使用pycsw测试，来执行你的pycsw安装样例申请。这些测试在``tests/`` 中。生成HTML页面："
 
-#: ../../testing.rst:93
+#: ../../testing.rst:315
 msgid "Then navigate to ``http://host/path/to/pycsw/tests/index.html``."
 msgstr "然后导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
+
+#~ msgid ""
+#~ "Compliance benchmarking is done via the"
+#~ " OGC `Compliance & Interoperability Testing"
+#~ " & Evaluation Initiative`_.  The pycsw "
+#~ "`wiki <https://github.com/geopython/pycsw/wiki/OGC-"
+#~ "CITE-Compliance>`_ documents testing procedures"
+#~ " and status."
+#~ msgstr ""
+#~ "合规性基准是通过OGC `合规性和互操作性测试与自发性评估`_ 完成的。该pycsw维基 "
+#~ "`<https://github.com/geopython/pycsw/wiki/OGC-CITE-"
+#~ "Compliance>`_ 文档测试程序和状态。"
+
+#~ msgid "Tester"
+#~ msgstr "测试仪"
+
+#~ msgid ""
+#~ "The pycsw tests framework (in ``tests``)"
+#~ " is a collection of testsuites to "
+#~ "perform automated regession testing of "
+#~ "the codebase.  Test are run against "
+#~ "all pushes to the GitHub repository "
+#~ "via `Travis CI`_."
+#~ msgstr ""
+#~ "该pycsw测试框架（在 ``tests`` 里）是测试包的集合体，用来执行代码库的自动regession测试。通过"
+#~ " `Travis CI`_ ，测试在GitHub的库中运行。"
+
+#~ msgid "Running Locally"
+#~ msgstr "本地运行"
+
+#~ msgid ""
+#~ "The tests framework can be run "
+#~ "from ``tests`` using `Paver`_ (see "
+#~ "``pavement.py``) tasks for convenience:"
+#~ msgstr "为方便工作，测试框架可以用 `Paver`_ (见 ``pavement.py``) 在 ``tests`` 中运行："
+
+#~ msgid ""
+#~ "The tests perform HTTP GET and "
+#~ "POST requests against ``http://localhost:8000``."
+#~ "  The expected output for each test"
+#~ " can be found in ``expected``.  "
+#~ "Results are categorized as ``passed``, "
+#~ "``failed``, or ``initialized``.  A summary "
+#~ "of results is output at the end"
+#~ " of the run."
+#~ msgstr ""
+#~ "针对 ``http://localhost:8000``，测试执行HTTP "
+#~ "GET和POST请求。每个测试的输出都在``expected``中。结果被归类为``通过``，``失败``，或``初始化``。总结的结果会在运行结束时输出。"
+
+#~ msgid "Failed Tests"
+#~ msgstr "测试失败"
+
+#~ msgid ""
+#~ "If a given test has failed, the"
+#~ " output is saved in ``results``.  The"
+#~ " resulting failure can be analyzed by"
+#~ " running ``diff tests/expected/name_of_test.xml "
+#~ "tests/results/name_of_test.xml`` to find variances."
+#~ "  The Paver task returns a status "
+#~ "code which indicates the number of "
+#~ "tests which have failed (i.e. ``echo "
+#~ "$?``)."
+#~ msgstr ""
+#~ "如果某个测试失败，输出将保存在``结果``中。 运行``diff "
+#~ "tests/expected/name_of_test.xml tests/results/name_of_test.xml``"
+#~ " ，会自动统计失败结果以找到差异。Paver任务会返回一个状态代码，表示已失败的测试数目（即``echo $?``）。"
+
+#~ msgid "Test Suites"
+#~ msgstr "测试套件"
+
+#~ msgid ""
+#~ "The tests framework is run against "
+#~ "a series of 'suites' (in "
+#~ "``tests/suites``), each of which specifies "
+#~ "a given configuration to test various"
+#~ " functionality of the codebase.  Each "
+#~ "suite is structured as follows:"
+#~ msgstr ""
+#~ "测试框架将针对一系列“套件”（在``测试/ "
+#~ "suites``）完成运行，其中每一项均指定一个给定的配置，以测试基本代码的各种功能。每个套件的结构如下："
+
+#~ msgid "``tests/suites/suite/default.cfg``: the configuration for the suite"
+#~ msgstr "`tests/suites/suite/default.cfg`：对于该套件的配置"
+
+#~ msgid ""
+#~ "``tests/suites/suite/post``: directory of XML "
+#~ "documents for HTTP POST requests"
+#~ msgstr "`tests/suites/suite/post`：XML文档目录的HTTP POST请求"
+
+#~ msgid ""
+#~ "``tests/suites/suite/get/requests.txt``: directory and "
+#~ "text file of KVP for HTTP GET "
+#~ "requests"
+#~ msgstr "`tests/suites/suite/get/requests.txt`：KVP的目录和文本文件，用于HTTP GET请求"
+
+#~ msgid ""
+#~ "``tests/suites/suite/data``: directory of sample "
+#~ "XML data required for the test "
+#~ "suite.  Database and test data are "
+#~ "setup/loaded automatically as part of "
+#~ "testing"
+#~ msgstr "`tests/suites/suite/data`：测试套件所需样本的XML数据目录。作为测试的一部分，数据库和测试数据是自动设置或自动加载的"
+
+#~ msgid "When the tests are invoked, the following operations are run:"
+#~ msgstr "当测试被调用，将执行以下操作："
+
+#~ msgid "pycsw configuration is set to ``tests/suites/suite/default.cfg``"
+#~ msgstr "pycsw配置设置为`tests/suites/suite/default.cfg`"
+
+#~ msgid "HTTP POST requests are run against ``tests/suites/suite/post/*.xml``"
+#~ msgstr "HTTP POST请求是针对 `tests/suites/suite/post/*.xml` 运行的"
+
+#~ msgid ""
+#~ "HTTP GET requests are run against "
+#~ "each request in "
+#~ "``tests/suites/suite/get/requests.txt``"
+#~ msgstr "HTTP GET请求是针对 ``tests/suites/suite/get/requests.txt`` 运行的"
+
+#~ msgid ""
+#~ "The CSV format of "
+#~ "``tests/suites/suite/get/requests.txt`` is "
+#~ "``testname,request``, with one line for "
+#~ "each test.  The ``testname`` value is"
+#~ " a unique test name (this value "
+#~ "sets the name of the output file"
+#~ " in the test results).  The "
+#~ "``request`` value is the HTTP GET "
+#~ "request.  The ``PYCSW_SERVER`` token is "
+#~ "replaced at runtime with the URL "
+#~ "to the pycsw install."
+#~ msgstr ""
+#~ "在每项测试的第一行中， `tests/suites/suite/get/requests.txt` 的CSV格式是"
+#~ "  `testname,request` 。该 ``testname`` "
+#~ "值是唯一的测试名（此值设置在测试结果输出文件的名称内）。该 ``request`` 值是HTTP "
+#~ "GET请求的值。该 ``PYCSW_SERVER`` 在URL pycsw安装运行时会被替换掉的。"
+
+#~ msgid "run ``paver test``"
+#~ msgstr "运行`paver test`"
+
+#~ msgid "Ensure that all file paths are relative to ``path/to/pycsw``"
+#~ msgstr "确保所有文件的路径都关联 ``path/to/pycsw`` "
+
+#~ msgid ""
+#~ "Ensure that ``repository.database`` points to"
+#~ " an SQLite3 database called "
+#~ "``tests/suites/foo/data/records.db``.  The database "
+#~ "*must* be called ``records.db`` and the"
+#~ " directory ``tests/suites/foo/data`` *must* exist"
+#~ msgstr ""
+#~ "确保 ``repository.database`` 指定于 "
+#~ "``tests/suites/foo/data/records.db`` 的一个sqlite3数据库。该数据库*必须*被写为"
+#~ " ``records.db``，目录 ``tests/suites/foo/data`` 也必须存在"
+
+#~ msgid ""
+#~ "run ``paver test`` (or ``paver test "
+#~ "-s foo`` to test only the new "
+#~ "test suite)"
+#~ msgstr "运行 ``paver test`` （或 ``paver test-s foo`` ， 仅用来测试新的测试套件）"
+
