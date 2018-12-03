@@ -300,9 +300,7 @@ class Repository(object):
             self.session.commit()
         except Exception as err:
             self.session.rollback()
-            msg = 'Cannot commit to repository'
-            LOGGER.exception(msg)
-            raise RuntimeError(msg)
+            raise
 
     def update(self, record=None, recprops=None, constraint=None):
         ''' Update a record in the repository based on identifier '''
@@ -416,7 +414,7 @@ def create_custom_sql_functions(connection):
     for function_object in [
         query_spatial,
         update_xpath,
-        get_anytext,
+        util.get_anytext,
         get_geometry_area,
         get_spatial_overlay_rank
     ]:
@@ -426,22 +424,6 @@ def create_custom_sql_functions(connection):
             len(argspec.args),
             function_object
         )
-
-
-def get_anytext(bag):
-    """
-    generate bag of text for free text searches
-    accepts list of words, string of XML, or etree.Element
-    """
-
-    if isinstance(bag, list):  # list of words
-        return ' '.join([_f for _f in bag if _f]).strip()
-    else:  # xml
-        if isinstance(bag, six.binary_type) or isinstance(bag, six.text_type):
-            # serialize to lxml
-            bag = etree.fromstring(bag, PARSER)
-        # get all XML element content
-        return ' '.join([value.strip() for value in bag.xpath('//text()')])
 
 
 def query_spatial(bbox_data_wkt, bbox_input_wkt, predicate, distance):

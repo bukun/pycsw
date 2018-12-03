@@ -41,6 +41,7 @@ from pycsw import oaipmh, opensearch, sru
 from pycsw.plugins.profiles import profile as pprofile
 import pycsw.plugins.outputschemas
 from pycsw.core import config, log, metadata, util
+from pycsw.core.formats.fmt_json import xml2dict
 from pycsw.ogc.fes import fes2
 import logging
 
@@ -612,7 +613,7 @@ class Csw3(object):
                 'elementsetname',
                 'Missing one of ElementSetName or ElementName parameter(s)')
 
-        if 'elementsetname' in self.parent.kvp and 'elementname' in self.parent.kvp:
+        if 'elementsetname' in self.parent.kvp and 'elementname' in self.parent.kvp and self.parent.kvp['elementname']:
             # mutually exclusive required
             return self.exceptionreport('NoApplicableCode',
             'elementsetname',
@@ -644,7 +645,7 @@ class Csw3(object):
                     if ofmt.split('/')[0] in self.parent.kvp['outputformat']:
                         LOGGER.debug('FOUND OUTPUT MATCH')
                         formats_match = True
-                if not formats_match:
+                if not formats_match and self.parent.environ['HTTP_ACCEPT'] != '*/*':
                     return self.exceptionreport('InvalidParameterValue',
                     'outputformat', 'HTTP Accept header (%s) and outputformat (%s) must agree' %
                     (self.parent.environ['HTTP_ACCEPT'], self.parent.kvp['outputformat']))
@@ -770,6 +771,7 @@ class Csw3(object):
                         self.parent.kvp['constraint']['where'], self.parent.kvp['constraint']['values'] = fes1.parse(cql,
                         self.parent.repository.queryables['_all'], self.parent.repository.dbtype,
                         self.parent.context.namespaces, self.parent.orm, self.parent.language['text'], self.parent.repository.fts)
+                        self.parent.kvp['constraint']['_dict'] = xml2dict(etree.tostring(cql), self.parent.context.namespaces)
                     except Exception as err:
                         LOGGER.exception('Invalid CQL query %s', tmp)
                         return self.exceptionreport('InvalidParameterValue',
@@ -791,6 +793,7 @@ class Csw3(object):
                         self.parent.repository.queryables['_all'],
                         self.parent.repository.dbtype,
                         self.parent.context.namespaces, self.parent.orm, self.parent.language['text'], self.parent.repository.fts)
+                        self.parent.kvp['constraint']['_dict'] = xml2dict(etree.tostring(doc), self.parent.context.namespaces)
                     except Exception as err:
                         errortext = \
                         'Exception: document not valid.\nError: %s' % str(err)
@@ -866,17 +869,16 @@ class Csw3(object):
 
         if int(matched) == 0:
             returned = nextrecord = '0'
+        elif int(self.parent.kvp['maxrecords']) == 0:
+            returned = nextrecord = '0'
+        elif int(matched) < int(self.parent.kvp['startposition']):
+            returned = nextrecord = '0'
+        elif int(matched) <= int(self.parent.kvp['startposition']) + int(self.parent.kvp['maxrecords']) - 1:
+            returned = str(int(matched) - int(self.parent.kvp['startposition']) + 1)
+            nextrecord = '0'
         else:
-            if int(matched) < int(self.parent.kvp['maxrecords']):
-                returned = matched
-                nextrecord = '0'
-            else:
-                returned = str(self.parent.kvp['maxrecords'])
-                if int(self.parent.kvp['startposition']) + int(self.parent.kvp['maxrecords']) >= int(matched):
-                    nextrecord = '0'
-                else:
-                    nextrecord = str(int(self.parent.kvp['startposition']) + \
-                    int(self.parent.kvp['maxrecords']))
+            returned = str(self.parent.kvp['maxrecords'])
+            nextrecord = str(int(self.parent.kvp['startposition']) + int(self.parent.kvp['maxrecords']))
 
         LOGGER.debug('Results: matched: %s, returned: %s, next: %s',
         matched, returned, nextrecord)
@@ -927,7 +929,8 @@ class Csw3(object):
                 try:
                     if (self.parent.kvp['outputschema'] ==
                         'http://www.opengis.net/cat/csw/3.0' and
-                        'csw:Record' in self.parent.kvp['typenames']):
+                        ('csw:Record' in self.parent.kvp['typenames'] or
+                         'csw30:Record' in self.parent.kvp['typenames'])):
                         # serialize csw:Record inline
                         searchresults.append(self._write_record(
                         res, self.parent.repository.queryables['_all']))
@@ -1318,8 +1321,8 @@ class Csw3(object):
             return self.exceptionreport('InvalidParameterValue',
             'resourcetype', 'Invalid resource type parameter: %s.\
             Allowable resourcetype values: %s' % (self.parent.kvp['resourcetype'],
-            ','.join(self.parent.context.model['operations']['Harvest']['parameters']
-            ['ResourceType']['values'])))
+            ','.join(sorted(self.parent.context.model['operations']['Harvest']['parameters']
+            ['ResourceType']['values']))))
 
         if (self.parent.kvp['resourcetype'].find('opengis.net') == -1 and
             self.parent.kvp['resourcetype'].find('urn:geoss:waf') == -1):
@@ -1633,6 +1636,7 @@ class Csw3(object):
                 query['where'], query['values'] = fes2.parse(tmp,
                 self.parent.repository.queryables['_all'], self.parent.repository.dbtype,
                 self.parent.context.namespaces, self.parent.orm, self.parent.language['text'], self.parent.repository.fts)
+                query['_dict'] = xml2dict(etree.tostring(tmp), self.parent.context.namespaces)
             except Exception as err:
                 return 'Invalid Filter request: %s' % err
 
@@ -1646,6 +1650,7 @@ class Csw3(object):
                 query['where'], query['values'] = fes1.parse(cql,
                 self.parent.repository.queryables['_all'], self.parent.repository.dbtype,
                 self.parent.context.namespaces, self.parent.orm, self.parent.language['text'], self.parent.repository.fts)
+                query['_dict'] = xml2dict(etree.tostring(cql), self.parent.context.namespaces)
             except Exception as err:
                 LOGGER.exception('Invalid CQL request: %s', tmp.text)
                 LOGGER.exception('Error message: %s', err)
@@ -2004,7 +2009,7 @@ class Csw3(object):
 
             node2.text = self.parent.request
 
-        if self.parent.async:
+        if self.parent.asynchronous:
             etree.SubElement(node, util.nspath_eval('csw30:RequestId',
             self.parent.context.namespaces)).text = self.parent.kvp['requestid']
 

@@ -32,14 +32,19 @@
 #
 # =================================================================
 
+import os
+import re
 import datetime
 import logging
 import time
 
+import six
 from six.moves.urllib.request import Request, urlopen
 from six.moves.urllib.parse import urlparse
 from shapely.wkt import loads
 from owslib.util import http_post
+
+from pycsw.core.etree import etree, PARSER
 
 LOGGER = logging.getLogger(__name__)
 
@@ -47,6 +52,12 @@ LOGGER = logging.getLogger(__name__)
 ranking_enabled = False
 ranking_pass = False
 ranking_query_geometry = ''
+
+# Lookups for the secure_filename function
+# https://github.com/pallets/werkzeug/blob/778f482d1ac0c9e8e98f774d2595e9074e6984d7/werkzeug/utils.py#L30-L31
+_filename_ascii_strip_re = re.compile(r'[^A-Za-z0-9_.-]')
+_windows_device_files = ('CON', 'AUX', 'COM1', 'COM2', 'COM3', 'COM4', 'LPT1',
+                         'LPT2', 'LPT3', 'PRN', 'NUL')
 
 
 def get_today_and_now():
@@ -154,6 +165,14 @@ def nspath_eval(xpath, nsmap):
     return '/'.join(out)
 
 
+def wktenvelope2bbox(envelope):
+    """returns bbox string of WKT ENVELOPE definition"""
+
+    tmparr = [x.strip() for x in envelope.split('(')[1].split(')')[0].split(',')]
+    bbox = '%s,%s,%s,%s' % (tmparr[0], tmparr[3], tmparr[1], tmparr[2])
+    return bbox
+
+
 def wkt2geom(ewkt, bounds=True):
     """Return Shapely geometry object based on WKT/EWKT
 
@@ -179,6 +198,8 @@ def wkt2geom(ewkt, bounds=True):
     """
 
     wkt = ewkt.split(";")[-1] if ewkt.find("SRID") != -1 else ewkt
+    if wkt.startswith('ENVELOPE'):
+        wkt = bbox2wktpolygon(wktenvelope2bbox(wkt))
     geometry = loads(wkt)
     return geometry.envelope.bounds if bounds else geometry
 
@@ -198,6 +219,8 @@ def bbox2wktpolygon(bbox):
 
     """
 
+    if bbox.startswith('ENVELOPE'):
+        bbox = wktenvelope2bbox(bbox)
     minx, miny, maxx, maxy = [float(coord) for coord in bbox.split(",")]
     return 'POLYGON((%.2f %.2f, %.2f %.2f, %.2f %.2f, %.2f %.2f, %.2f %.2f))' \
         % (minx, miny, minx, maxy, maxx, maxy, maxx, miny, minx, miny)
@@ -307,3 +330,65 @@ def ipaddress_in_whitelist(ipaddress, whitelist):
                     if ipaddress.startswith(white.split('*')[0]):
                         return True
     return False
+
+
+def get_anytext(bag):
+    """
+    generate bag of text for free text searches
+    accepts list of words, string of XML, or etree.Element
+    """
+
+    if isinstance(bag, list):  # list of words
+        return ' '.join([_f for _f in bag if _f]).strip()
+    else:  # xml
+        if isinstance(bag, six.binary_type) or isinstance(bag, six.text_type):
+            # serialize to lxml
+            bag = etree.fromstring(bag, PARSER)
+        # get all XML element content
+        return ' '.join([value.strip() for value in bag.xpath('//text()')])
+
+
+# https://github.com/pallets/werkzeug/blob/778f482d1ac0c9e8e98f774d2595e9074e6984d7/werkzeug/utils.py#L253
+def secure_filename(filename):
+    r"""Pass it a filename and it will return a secure version of it.  This
+    filename can then safely be stored on a regular file system and passed
+    to :func:`os.path.join`.  The filename returned is an ASCII only string
+    for maximum portability.
+
+    On windows systems the function also makes sure that the file is not
+    named after one of the special device files.
+
+    >>> secure_filename("My cool movie.mov")
+    'My_cool_movie.mov'
+    >>> secure_filename("../../../etc/passwd")
+    'etc_passwd'
+    >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
+    'i_contain_cool_umlauts.txt'
+
+    The function might return an empty filename.  It's your responsibility
+    to ensure that the filename is unique and that you abort or
+    generate a random filename if the function returned an empty one.
+
+    .. versionadded:: 0.5
+
+    :param filename: the filename to secure
+    """
+    if isinstance(filename, six.text_type):
+        from unicodedata import normalize
+        filename = normalize('NFKD', filename).encode('ascii', 'ignore')
+        if not six.PY2:
+            filename = filename.decode('ascii')
+    for sep in os.path.sep, os.path.altsep:
+        if sep:
+            filename = filename.replace(sep, ' ')
+    filename = str(_filename_ascii_strip_re.sub('', '_'.join(
+                   filename.split()))).strip('._')
+
+    # on nt a couple of special files are present in each folder.  We
+    # have to ensure that the target file is not such a filename.  In
+    # this case we prepend an underline
+    if os.name == 'nt' and filename and \
+       filename.split('.')[0].upper() in _windows_device_files:
+        filename = '_' + filename
+
+    return filename

@@ -75,7 +75,7 @@ class Csw(object):
         self.kvp = {}
 
         self.mode = 'csw'
-        self.async = False
+        self.asynchronous = False
         self.soap = False
         self.request = None
         self.exception = False
@@ -116,11 +116,10 @@ class Csw(object):
                     with codecs.open(rtconfig, encoding='utf-8') as scp:
                         self.config.readfp(scp)
         except Exception as err:
-            LOGGER.exception('Could not load user configuration: %s', err)
+            msg = 'Could not load configuration'
+            LOGGER.exception('%s %s: %s', msg, rtconfig, err)
             self.response = self.iface.exceptionreport(
-                'NoApplicableCode', 'service',
-                'Error opening configuration %s' % rtconfig
-            )
+                'NoApplicableCode', 'service', msg)
             return
 
         # set server.home safely
@@ -273,6 +272,7 @@ class Csw(object):
     def dispatch(self, writer=sys.stdout, write_headers=True):
         """ Handle incoming HTTP request """
 
+        error = 0
         if self.requesttype == 'GET':
             self.kvp = self.normalize_kvp(self.kvp)
             version_202 = ('version' in self.kvp and
@@ -282,8 +282,10 @@ class Csw(object):
             if version_202 or accept_version_202:
                 self.request_version = '2.0.2'
         elif self.requesttype == 'POST':
-            if self.request.find(b'2.0.2') != -1:
+            if self.request.find(b'cat/csw/2.0.2') != -1:
                 self.request_version = '2.0.2'
+            elif self.request.find(b'cat/csw/3.0') != -1:
+                self.request_version = '3.0.0'
 
         if (not isinstance(self.kvp, str) and 'mode' in self.kvp and
                 self.kvp['mode'] == 'sru'):
@@ -384,10 +386,12 @@ class Csw(object):
                 self.repository = rs_cls(self.context, repo_filter)
                 LOGGER.debug('Custom repository %s loaded (%s)', rs, self.repository.dbtype)
             except Exception as err:
-                msg = 'Could not load custom repository'
+                msg = 'Could not load custom repository %s: %s' % (rs, err)
                 LOGGER.exception(msg)
-                self.response = self.iface.exceptionreport(
-                    'NoApplicableCode', 'service', msg)
+                error = 1
+                code = 'NoApplicableCode'
+                locator = 'service'
+                text = 'Could not initialize repository. Check server logs'
 
         else:  # load default repository
             self.orm = 'sqlalchemy'
@@ -404,17 +408,17 @@ class Csw(object):
                 LOGGER.debug(
                     'Repository loaded (local): %s.' % self.repository.dbtype)
             except Exception as err:
-                msg = 'Could not load repository (local)'
+                msg = 'Could not load repository (local): %s' % err
                 LOGGER.exception(msg)
-                self.response = self.iface.exceptionreport(
-                    'NoApplicableCode', 'service', msg)
+                error = 1
+                code = 'NoApplicableCode'
+                locator = 'service'
+                text = 'Could not initialize repository. Check server logs'
 
         if self.requesttype == 'POST':
             LOGGER.debug('HTTP POST request')
             LOGGER.debug('CSW version: %s', self.iface.version)
             self.kvp = self.iface.parse_postdata(self.request)
-
-        error = 0
 
         if isinstance(self.kvp, str):  # it's an exception
             error = 1
@@ -455,6 +459,12 @@ class Csw(object):
             own_version_integer = util.get_version_integer(
                 self.request_version)
             if self.request_version == '2.0.2':
+                basic_options.append('version')
+            if self.request_version == '3.0.0' and 'version' not in self.kvp and self.requesttype == 'POST':
+                if 'service' not in self.kvp:
+                    self.kvp['service'] = 'CSW'
+                    basic_options.append('service')
+                self.kvp['version'] = self.request_version
                 basic_options.append('version')
 
             for k in basic_options:
@@ -529,7 +539,7 @@ class Csw(object):
             if 'responsehandler' in self.kvp:
                 # set flag to process asynchronously
                 import threading
-                self.async = True
+                self.asynchronous = True
                 request_id = self.kvp.get('requestid', None)
                 if request_id is None:
                     import uuid
@@ -542,7 +552,7 @@ class Csw(object):
             elif self.kvp['request'] == 'GetDomain':
                 self.response = self.iface.getdomain()
             elif self.kvp['request'] == 'GetRecords':
-                if self.async:  # process asynchronously
+                if self.asynchronous:  # process asynchronously
                     threading.Thread(target=self.iface.getrecords).start()
                     self.response = self.iface._write_acknowledgement()
                 else:
@@ -554,7 +564,7 @@ class Csw(object):
             elif self.kvp['request'] == 'Transaction':
                 self.response = self.iface.transaction()
             elif self.kvp['request'] == 'Harvest':
-                if self.async:  # process asynchronously
+                if self.asynchronous:  # process asynchronously
                     threading.Thread(target=self.iface.harvest).start()
                     self.response = self.iface._write_acknowledgement()
                 else:
@@ -771,7 +781,11 @@ class Csw(object):
         if self.config.get('manager', 'transactions') != 'true':
             raise RuntimeError('CSW-T interface is disabled')
 
-        ipaddress = self.environ['REMOTE_ADDR']
+        """ get the client first forwarded ip """
+        if 'HTTP_X_FORWARDED_FOR' in self.environ:
+            ipaddress = self.environ['HTTP_X_FORWARDED_FOR'].split(',')[0].strip()
+        else:
+            ipaddress = self.environ['REMOTE_ADDR']
 
         if not self.config.has_option('manager', 'allowed_ips') or \
         (self.config.has_option('manager', 'allowed_ips') and not
