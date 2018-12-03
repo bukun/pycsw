@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pycsw 2.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 21:54+0800\n"
+"POT-Creation-Date: 2018-12-03 22:09+0800\n"
 "PO-Revision-Date: 2016-06-08 16:56+0800\n"
 "Last-Translator: \n"
 "Language: zh_Hans_CN\n"
@@ -12,7 +12,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.4.0\n"
+"Generated-By: Babel 2.6.0\n"
 
 #: ../../testing.rst:4
 msgid "Testing"
@@ -208,7 +208,9 @@ msgstr "对于HTTP POST测试，在 ``tests/functionaltests/suites/<suite>/post`
 msgid ""
 "for HTTP GET tests, add tests (one per line) to "
 "``tests/functionaltests/suites/<suite>/get/requests.txt``"
-msgstr "对于HTTP GET测试，在 ``tests/functionaltests/suites/<suite>/get/requests.txt`` 中添加测试（每行的第一项）"
+msgstr ""
+"对于HTTP GET测试，在 ``tests/functionaltests/suites/<suite>/get/requests.txt`` "
+"中添加测试（每行的第一项）"
 
 #: ../../testing.rst:123
 msgid "To add a new test suite:"
@@ -237,8 +239,7 @@ msgid ""
 "If the test suite requires test data, create ``tests/suites/foo/data`` "
 "and store XML files there. These will be inserted in the test catalogue "
 "at test runtime"
-msgstr "如果需要测试组件的测试数据，创建 ``tests/suites/foo/data``，以存储XML文件。"
-"这会在运行时插入到测试目录。"
+msgstr "如果需要测试组件的测试数据，创建 ``tests/suites/foo/data``，以存储XML文件。这会在运行时插入到测试目录。"
 
 #: ../../testing.rst:132
 msgid "Use pytest or tox as described above in order to run the tests"
@@ -366,62 +367,87 @@ msgid ""
 msgstr ""
 
 #: ../../testing.rst:245
-msgid "Test coverage"
+msgid "Comparing results with difflib instead of XML c14n"
 msgstr ""
 
 #: ../../testing.rst:247
+msgid ""
+"The functional tests compare results with their expected values by using "
+"[XML canonicalisation - XML c14n](https://www.w3.org/TR/xml-c14n/). "
+"Alternatively, you can call py.test with the ``--functional-prefer-"
+"diffs`` flag. This will enable comparison based on Python's ``difflib``. "
+"Comparison is made on a line-by-line basis and in case of failure, a "
+"unified diff will be printed to standard output."
+msgstr ""
+
+#: ../../testing.rst:260
+msgid "Saving test results for disk"
+msgstr ""
+
+#: ../../testing.rst:262
+msgid ""
+"The result of each functional test can be saved to disk by using the "
+"``--functional-save-results-directory`` option. Each result file is named"
+" after the test identifier it has when running with pytest."
+msgstr ""
+
+#: ../../testing.rst:273
+msgid "Test coverage"
+msgstr ""
+
+#: ../../testing.rst:275
 msgid ""
 "Use the `--cov pycsw` flag in order to see information on code coverage. "
 "It is possible to get output in a variety of formats."
 msgstr ""
 
-#: ../../testing.rst:256
+#: ../../testing.rst:284
 msgid "Specifying a timeout for tests"
 msgstr ""
 
-#: ../../testing.rst:258
+#: ../../testing.rst:286
 msgid ""
 "The `--timeout <seconds>` option can be used to specify that if a test "
 "takes more than `<seconds>` to run it is considered to have failed. "
 "Seconds can be a float, so it is possibe to specify sub-second timeouts"
 msgstr ""
 
-#: ../../testing.rst:268
+#: ../../testing.rst:296
 msgid "Linting with flake8"
 msgstr ""
 
-#: ../../testing.rst:270
+#: ../../testing.rst:298
 msgid ""
 "Use the `--flake8` flag to also check if the code complies with Python's "
 "style guide"
 msgstr ""
 
-#: ../../testing.rst:279
-msgid "Testing multiple python versions"
+#: ../../testing.rst:307
+msgid "Testing multiple Python versions"
 msgstr ""
 
-#: ../../testing.rst:281
+#: ../../testing.rst:309
 msgid ""
-"For testing multiple python versions and configurations simultaneously "
+"For testing multiple Python versions and configurations simultaneously "
 "you can use `tox`_. pycsw includes a `tox.ini` file with a suitable "
-"configuration. It can be used to run tests against multiple python "
+"configuration. It can be used to run tests against multiple Python "
 "versions and also multiple database backends. When running `tox` you can "
 "send arguments to the `py.test` runner by using the invocation `tox <tox "
 "arguments> -- <py.test arguments>`. Examples:"
 msgstr ""
 
-#: ../../testing.rst:305
+#: ../../testing.rst:333
 msgid "Web Testing"
 msgstr "Web测试"
 
-#: ../../testing.rst:307
+#: ../../testing.rst:335
 msgid ""
 "You can also use the pycsw tests via your web browser to perform sample "
 "requests against your pycsw install.  The tests are is located in "
 "``tests/``.  To generate the HTML page:"
 msgstr "您还可以通过Web浏览器使用pycsw测试，来执行你的pycsw安装样例申请。这些测试在``tests/`` 中。生成HTML页面："
 
-#: ../../testing.rst:315
+#: ../../testing.rst:343
 msgid "Then navigate to ``http://host/path/to/pycsw/tests/index.html``."
 msgstr "然后导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 
@@ -582,4 +608,21 @@ msgstr "然后导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ "-s foo`` to test only the new "
 #~ "test suite)"
 #~ msgstr "运行 ``paver test`` （或 ``paver test-s foo`` ， 仅用来测试新的测试套件）"
+
+#~ msgid "Testing multiple python versions"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For testing multiple python versions and"
+#~ " configurations simultaneously you can use"
+#~ " `tox`_. pycsw includes a `tox.ini` "
+#~ "file with a suitable configuration. It"
+#~ " can be used to run tests "
+#~ "against multiple python versions and "
+#~ "also multiple database backends. When "
+#~ "running `tox` you can send arguments "
+#~ "to the `py.test` runner by using "
+#~ "the invocation `tox <tox arguments> --"
+#~ " <py.test arguments>`. Examples:"
+#~ msgstr ""
 
