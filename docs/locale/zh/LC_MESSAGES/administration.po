@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pycsw 2.0-dev\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-17 17:33+0800\n"
+"POT-Creation-Date: 2018-12-04 09:48+0800\n"
 "PO-Revision-Date: 2016-06-01 08:59+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.3.4\n"
+"Generated-By: Babel 2.6.0\n"
 
 #: ../../administration.rst:4
 msgid "Administration"
@@ -32,7 +32,8 @@ msgid ""
 msgstr "运行 ``pycsw-admin.py -h`` 来查看所有的管理操作与参数。 "
 
 #: ../../administration.rst:14
-msgid "Metadata  Setup"
+#, fuzzy
+msgid "Metadata Repository Setup"
 msgstr "元数据仓库设置"
 
 #: ../../administration.rst:16
@@ -70,8 +71,7 @@ msgid ""
 "If PostGIS (1.x or 2.x) is activated before setting up the "
 "pycsw/PostgreSQL database, then native PostGIS geometries will be "
 "enabled."
-msgstr ""
-"如果在建立 pycsw/PostgreSQL 数据库之前激活PostGIS（1.×或2.x），那么可以使用PostGIS 支持的几何对象。"
+msgstr "如果在建立 pycsw/PostgreSQL 数据库之前激活PostGIS（1.×或2.x），那么可以使用PostGIS 支持的几何对象。"
 
 #: ../../administration.rst:32
 msgid ""
@@ -155,8 +155,8 @@ msgid ""
 "(``repository.database``) to an XML document on disk, in directory "
 "``/path/to/output_dir``."
 msgstr ""
-"这会将 ``default.cfg`` (``repository.database``) 中声明的数据库的每项记录都以XML格式文件导出到在磁盘目录 "
-"``/path/to/output_dir`` 下。"
+"这会将 ``default.cfg`` (``repository.database``) "
+"中声明的数据库的每项记录都以XML格式文件导出到在磁盘目录 ``/path/to/output_dir`` 下。"
 
 #: ../../administration.rst:92
 msgid "Optimizing the Database"
