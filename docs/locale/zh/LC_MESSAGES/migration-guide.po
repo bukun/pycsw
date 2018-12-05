@@ -40,8 +40,8 @@ msgid ""
 "WSGI wrapper to the pycsw API to force ``version=2.0.2`` on init of ``pycsw."
 "server.Csw`` from the server.  See :ref:`csw-support` for more information."
 msgstr ""
-"缺省的CSW版本是 3.0.0。 CSW 客户端需要显式地声明 ```version=2.0.2`` 来使用 CSW "
-"2的行为。另外，pycsw管理器可能通过在服务器端通过 ``pycsw.server.Csw`` 初始化来"
+"缺省的CSW版本是 3.0.0。 CSW 客户端需要显式地声明 ``version=2.0.2`` 来使用 CSW 2的行为。"
+"另外，pycsw管理器可能通过在服务器端通过 ``pycsw.server.Csw`` 初始化来"
 "使用强制的 pycsw ``version=2.0.2``。 查看 :ref:`csw-support` 来获取更多的信息."
 
 #: ../../migration-guide.rst:17

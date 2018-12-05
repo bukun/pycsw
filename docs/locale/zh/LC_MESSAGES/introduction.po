@@ -30,7 +30,7 @@ msgstr "特性"
 msgid ""
 "certified OGC `Compliant`_ and OGC Reference Implementation for both CSW "
 "2.0.2 and CSW 3.0.0"
-msgstr "认证 OGC `Compliant`_ 与 OGC 参考实现"
+msgstr "CSW 2.0.2与 CSW 3.0.0 认证 OGC `Compliant`_ 与 OGC 参考实现"
 
 #: ../../introduction.rst:12
 msgid "harvesting support for WMS, WFS, WCS, WPS, WAF, CSW, SOS"
@@ -38,7 +38,7 @@ msgstr "WMS、WFS、WCS、WPS、WAF、CSW、SOS得到支持"
 
 #: ../../introduction.rst:13
 msgid "implements `INSPIRE Discovery Services 3.0`_"
-msgstr "实现了 `INSPIRE Discovery Services 3.0`_"
+msgstr "实现了 `INSPIRE Discovery Services 3.0`_ "
 
 #: ../../introduction.rst:14
 msgid "implements `ISO Metadata Application Profile 1.0.0`_"
@@ -46,11 +46,11 @@ msgstr "实现了 `ISO Metadata Application Profile 1.0.0`_"
 
 #: ../../introduction.rst:15
 msgid "implements `FGDC CSDGM Application Profile for CSW 2.0`_"
-msgstr "实现了 `FGDC CSDGM Application Profile for CSW 2.0`_"
+msgstr "实现了 `FGDC CSDGM Application Profile for CSW 2.0`_ "
 
 #: ../../introduction.rst:16
 msgid "implements the Search/Retrieval via URL (`SRU`_) search protocol"
-msgstr "实现了通过URL (`SRU`_) 查找接口进行查找或抓取"
+msgstr "实现了通过URL ( `SRU`_ ) 查找接口进行查找或抓取"
 
 #: ../../introduction.rst:17
 msgid "implements Full Text Search capabilities"

@@ -148,7 +148,7 @@ msgstr "若要在 openSUSE  Tumbleweed (滚动版本) 安装 pycsw 包，就可�
 
 #: ../../installation.rst:124
 msgid "An alternative method is to use the `One-Click Installer <https://software.opensuse.org/package/python-pycsw>`_."
-msgstr "另一种方法是使用一键式安装程序<https://software.opensuse.org/package/python-pycsw>`_."
+msgstr "另一种方法是使用 `一键式安装程序 <https://software.opensuse.org/package/python-pycsw>`_ 。"
 
 #: ../../installation.rst:129
 msgid "Installing on Ubuntu/Mint"
@@ -166,7 +166,7 @@ msgstr "或者，可以使用UbuntuGIS Stable存储库，其中包含较老但�
 
 #: ../../installation.rst:141
 msgid "# sudo add-apt-repository ppa:ubuntugis/ppa # sudo apt-get update # sudo apt-get install python-pycsw pycsw-cgi"
-msgstr "# sudo add-apt-repository ppa:ubuntugis/ppa # sudo apt-get update # sudo apt-get install python-pycsw pycsw-cgi"
+msgstr ""
 
 #: ../../installation.rst:146
 msgid "Since Ubuntu 16.04 LTS Xenial release, pycsw is included by default in the official Multiverse repository."
@@ -193,17 +193,17 @@ msgid ""
 "By default, ``default.cfg`` is at the root of the pycsw install.  If pycsw is setup outside an HTTP server's ``cgi-"
 "bin`` area, this file could be read.  The following options protect the configuration:"
 msgstr ""
-"默认情况下，' default.cfg ' 是 pycsw 安装的根目录。 如果 pycsw 设置在 HTTP 服务器 'cgi-bin' 区域以外，此文件就可以被读"
-"取。 以下是几项保护配置的选项:"
+"默认情况下， ``default.cfg`` 是 pycsw 安装的根目录。 如果 pycsw 设置在 HTTP 服务器 ``cgi-bin`` 区域以外，"
+"此文件就可以被读取。 以下是几项保护配置的选项:"
 
 #: ../../installation.rst:165
 msgid "move ``default.cfg`` to a non HTTP accessible area, and modify ``csw.py`` to point to the updated location"
-msgstr "将 'default.cfg' 移动到非 HTTP 可访问的区域，并修改 'csw.py' 以指向更新的位置"
+msgstr "将 ``default.cfg`` 移动到非 HTTP 可访问的区域，并修改 ``csw.py`` 以指向更新的位置"
 
 #: ../../installation.rst:166
 msgid ""
 "configure web server to deny access to the configuration.  For example, in Apache, add the following to ``httpd.conf``:"
-msgstr "配置 web 服务器，拒绝对配置的访问。 例如，在 Apache 中，在 'httpd.conf '下添加以下内容:"
+msgstr "配置 web 服务器，拒绝对配置的访问。 例如，在 Apache 中，在 ``httpd.conf`` 下添加以下内容:"
 
 #: ../../installation.rst:177
 msgid "Running on WSGI"
@@ -214,7 +214,7 @@ msgid ""
 "pycsw supports the `Web Server Gateway Interface`_ (WSGI).  To run pycsw in WSGI mode, use ``pycsw/wsgi.py`` in your "
 "WSGI server environment."
 msgstr ""
-"pycsw 支持 `Web 服务器网关接口`_ (WSGI)。 在 WSGI 模式下运行 pycsw，在 WSGI 服务器环境中使用 ``pycsw/wsgi.py`` 。"
+"pycsw 支持 `Web Server Gateway Interface`_ (WSGI)。 在 WSGI 模式下运行 pycsw，在 WSGI 服务器环境中使用 ``pycsw/wsgi.py`` 。"
 
 #: ../../installation.rst:184
 msgid ""
@@ -222,7 +222,8 @@ msgid ""
 "applications, pycsw will need to use the same python version. `WSGIDaemonProcess`_ provides a ``python-path`` "
 "directive that may allow a virtualenv created from the python version ``mod_wsgi`` uses."
 msgstr ""
-"``mod_wsgi`` 只支持已编译的python版本。如果目标服务器支持 WSGI 应用，pycsw也是相同的 python 版本。`WSGIDaemonProcess`_ "
+"``mod_wsgi`` 只支持已编译的python版本。如果目标服务器支持 WSGI 应用，pycsw也是相同的 python 版本。"
+"`WSGIDaemonProcess`_ "
 "提供一个  ``python-path``  指令，其允许从 python 版本 ``mod_wsgi`` 进行virtualenv 的创建。"
 
 #: ../../installation.rst:188

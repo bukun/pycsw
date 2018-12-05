@@ -86,7 +86,7 @@ msgid ""
 "must minimally implement the ``query_insert``, ``query_domain``, "
 "``query_ids``, and ``query`` methods"
 msgstr ""
-"必须最低限度地实现``query_insert``, ``query_domain``, ``query_ids``, and "
+"必须最低限度地实现 ``query_insert``, ``query_domain``, ``query_ids``, and "
 "``query`` 方法"
 
 #: ../../repositories.rst:25

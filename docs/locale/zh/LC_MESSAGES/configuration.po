@@ -23,12 +23,13 @@ msgid ""
 "pycsw's runtime configuration is defined by ``default.cfg``.  pycsw ships with a sample configuration (``default-sample."
 "cfg``).  Copy the file to ``default.cfg`` and edit the following:"
 msgstr ""
-"pycsw 的运行配置写为此格式 ``default.cfg`` 。 pycsw 还有一个示例配置 ( ``default-sample.cfg`` )。 将文件复制到 ``default.cfg`` "
-"并编辑以下内容："
+"pycsw 的运行配置写为此格式 ``default.cfg`` 。 "
+"pycsw 还有一个示例配置 ( ``default-sample.cfg`` )。 "
+"将文件复制到 ``default.cfg`` 并编辑以下内容："
 
 #: ../../configuration.rst:8
 msgid "**[server]**"
-msgstr "**[server]**"
+msgstr ""
 
 #: ../../configuration.rst:10
 msgid "**home**: the full filesystem path to pycsw"
@@ -52,16 +53,17 @@ msgid ""
 "**encoding**: the content type encoding (e.g. ``ISO-8859-1``, see https://docs.python.org/2/library/codecs.html#standard-"
 "encodings).  Default value is 'UTF-8'"
 msgstr ""
-"**encoding**: 编码的内容类别 (例如 ``ISO-8859-1``，见 https://docs.python.org/2/library/codecs.html#standard-encodings) 。 默认"
-"值是 'UTF-8'"
+"**encoding**: 编码的内容类别 (例如 ``ISO-8859-1``，见 https://docs.python.org/2/library/codecs.html#standard-encodings ) 。"
+" 默认值是 'UTF-8' "
 
 #: ../../configuration.rst:15
 msgid ""
 "**maxrecords**: the maximum number of records to return by default.  This value is enforced if a CSW's client's ``maxRecords`` "
 "parameter is greater than ``server.maxrecords`` to limit capacity.  See :ref:`maxrecords-handling` for more information"
 msgstr ""
-"**maxrecords**: 默认情况下再次浏览记录的最大数目。如果CSW客户端的 ``maxRecords`` 参数大于 ``server.maxrecords`` ，此值就会被强制"
-"性限制。 请参见 :ref:`maxrecords-handling` 的详细信息"
+"**maxrecords**: 默认情况下再次浏览记录的最大数目。"
+"如果CSW客户端的 ``maxRecords`` 参数大于 ``server.maxrecords`` ，"
+"此值就会被强制性限制。 请参见 :ref:`maxrecords-handling` 的详细信息"
 
 #: ../../configuration.rst:16
 msgid "**loglevel**: the logging level (see http://docs.python.org/library/logging.html#logging-levels)"
@@ -80,28 +82,30 @@ msgid ""
 "**federatedcatalogues**: comma delimited list of CSW endpoints to be used for distributed searching, if requested by the client "
 "(see :ref:`distributedsearching`)"
 msgstr ""
-"**federatedcatalogues**: 如果客户端有用户请求加入时， CSW端以逗号分隔的列表就会用于分布式搜索 (请参阅 :ref:"
-"`distributedsearching` )"
+"**federatedcatalogues**: 如果客户端有用户请求加入时， "
+"CSW端以逗号分隔的列表就会用于分布式搜索 (请参阅 :ref:`distributedsearching` )"
 
 #: ../../configuration.rst:20
 msgid "**pretty_print**: whether to pretty print the output (``true`` or ``false``).  Default is ``false``"
-msgstr "**pretty_print**: 输出的（''是'或'否'）来确认是否要优质打印。 默认值为否"
+msgstr "**pretty_print**: 输出的（ ``true`` or ``false`` ）来确认是否要优质打印。 默认值为 ``false`` "
 
 #: ../../configuration.rst:21
 msgid "**gzip_compresslevel**: gzip compression level, lowest is ``1``, highest is ``9``.  Default is off"
-msgstr "**gzip_compresslevel**: 压缩级别，最低是 '1 '，最高是' 9 '。 默认值是不压缩"
+msgstr "**gzip_compresslevel**: 压缩级别，最低是  ``1`` ，最高是 ``9`` 。 默认值是不压缩"
 
 #: ../../configuration.rst:22
 msgid ""
 "**domainquerytype**: for GetDomain operations, how to output domain values.  Accepted values are ``list`` and ``range`` (min/"
 "max). Default is ``list``"
-msgstr "**domainquerytype**: 在GetDomain中应当如何输出域值呢。 公认的域值有'列表'和'range' （最小/最大）。默认值是列表"
+msgstr "**domainquerytype**: 在GetDomain中应当如何输出域值。 "
+"公认的域值有 ``list`` 和 ``range`` （最小/最大）。默认值是 ``list`` "
 
 #: ../../configuration.rst:23
 msgid ""
 "**domaincounts**: for GetDomain operations, whether to provide frequency counts for values.  Accepted values are ``true`` and "
 "``False``. Default is ``false``"
-msgstr "**domaincounts**：在GetDomain中，是否要提供频率计数值的操作。 目前的值有'是'和'否' 。默认值为否"
+msgstr "**domaincounts**：在GetDomain中，是否要提供频率计数值的操作。 "
+"目前的值有 ``true`` 和 ``false`` 。默认值为 ``false`` "
 
 #: ../../configuration.rst:24
 msgid "**profiles**: comma delimited list of profiles to load at runtime (default is none).  See :ref:`profiles`"
@@ -117,8 +121,8 @@ msgid ""
 "**spatial_ranking**: parameter that enables (``true`` or ``false``) ranking of spatial query results as per `K.J. Lanfear 2006 "
 "- A Spatial Overlay Ranking Method for a Geospatial Search of Text Objects  <http://pubs.usgs.gov/of/2006/1279/2006-1279.pdf>`_."
 msgstr ""
-"**spatial_ranking**: 是否在对空间搜索的结果进行排名的一项参数（' 是' 或' 否' ），此排名参数在每“K.J. Lanfear 2006” - 文本对象空"
-"间搜索的一个空间覆盖排名方法，“K.J. Lanfear 2006”网址：<http: pubs.usgs.gov/of/2006/1279/2006-1279.pdf>_."
+"**spatial_ranking**: 是否在对空间搜索的结果进行排名的一项参数（ ``true`` 或  ``false`` ），"
+"此排名参数在每 `K.J. Lanfear 2006 文本对象空间搜索的一个空间覆盖排名方法 <http: pubs.usgs.gov/of/2006/1279/2006-1279.pdf>`_ 。"
 
 #: ../../configuration.rst:28
 msgid "**[manager]**"
@@ -133,8 +137,8 @@ msgid ""
 "**allowed_ips**: comma delimited list of IP addresses (e.g. 192.168.0.103), wildcards (e.g. 192.168.0.*) or CIDR notations (e."
 "g. 192.168.100.0/24) allowed to perform transactions (see :ref:`transactions`)"
 msgstr ""
-"**allowed_ips**: IP 地址 (如 192.168.0.103)、 通配符 (如 192.168.0.*) 或 CIDR 表示法 (例如 192.168.100.0/24) 以逗号分隔的列表允"
-"许执行交易 (请参见 :ref:`transactions` ）"
+"**allowed_ips**: IP 地址 (如 192.168.0.103)、 通配符 (如 192.168.0.*) 或 "
+"CIDR 表示法 (例如 192.168.100.0/24) 以逗号分隔的列表允许执行交易 (请参见 :ref:`transactions` ）"
 
 #: ../../configuration.rst:32
 msgid "**csw_harvest_pagesize**: when harvesting other CSW servers, the number of records per request to page by (default is 10)"
@@ -142,7 +146,7 @@ msgstr "**csw_harvest_pagesize**: 当收集其它CSW服务器时，每项请求�
 
 #: ../../configuration.rst:34
 msgid "**[metadata:main]**"
-msgstr "**[metadata:main]**"
+msgstr ""
 
 #: ../../configuration.rst:36
 msgid "**identification_title**: the title of the service"
@@ -162,8 +166,9 @@ msgid ""
 "resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode>`_).  Accepted values are ``discipline``, ``temporal``, ``place``, "
 "``theme``, ``stratum``"
 msgstr ""
-"**identification_keywords_type**: 每 'ISO 19115 MD_KeywordTypeCode 代码列表<http: www.isotc211.org/2005/resources/codelist/"
-"gmxcodelists.xml#md_keywordtypecode=\"\">' _)的关键字类型。 接受的值是``discipline``, ``temporal``, ``place``, ``theme``, "
+"**identification_keywords_type**: "
+"每 `ISO 19115 MD_KeywordTypeCode codelist <http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode>`_ )的关键字类型。"
+"接受的值是``discipline``, ``temporal``, ``place``, ``theme``, "
 "``stratum``"
 
 #: ../../configuration.rst:40
@@ -241,8 +246,8 @@ msgid ""
 "``custodian``, ``pointOfContact``, ``distributor``, ``user``, ``resourceProvider``, ``originator``, ``owner``, "
 "``principalInvestigator``"
 msgstr ""
-"**contact_role**: 在 'ISO 19115 CI_RoleCode 代码列表中：<http: www.isotc211.org/2005/resources/codelist/gmxcodelists."
-"xml#ci_rolecode=\"\">' _)有每位提供商联系人的职务。可接受的值包括  ``author``, ``processor``, ``publisher``, ``custodian``, "
+"**contact_role**: 在 `ISO 19115 CI_RoleCode codelist <http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode>`_ )"
+"有每位提供商联系人的职务。可接受的值包括  ``author``, ``processor``, ``publisher``, ``custodian``, "
 "``pointOfContact``, ``distributor``, ``user``, ``resourceProvider``, ``originator``, ``owner``, ``principalInvestigator``"
 
 #: ../../configuration.rst:59
@@ -254,15 +259,15 @@ msgid ""
 "**database**: the full file path to the metadata database, in database URL format (see http://docs.sqlalchemy.org/en/latest/"
 "core/engines.html#database-urls)"
 msgstr ""
-"**database**：元数据库中完整的文件路径，数据库URL格式（见 http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls）"
+"**database**：元数据库中完整的文件路径，数据库URL格式（见 http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls ）"
 
 #: ../../configuration.rst:62
 msgid ""
 "**table**: the table name for metadata records (default is ``records``).  If you are using PostgreSQL with a DB schema other "
 "than ``public``, qualify the table like ``myschema.table``"
 msgstr ""
-"**table**：元数据记录的表名（默认为 ``records``）。如果您在使用除了``public``以外的DB模式PostgreSQL，表格就会被限定，像 "
-"``myschema.table``"
+"**table**：元数据记录的表名（默认为 ``records``）。如果您在使用除了 ``public`` 以外的DB模式PostgreSQL，"
+"表格就会被限定，像 ``myschema.table`` "
 
 #: ../../configuration.rst:63
 msgid "**mappings**: custom repository mappings (see :ref:`custom_repository`)"
@@ -316,19 +321,19 @@ msgstr "10 （CSW 默认值）"
 
 #: ../../configuration.rst:1
 msgid "20"
-msgstr "20"
+msgstr ""
 
 #: ../../configuration.rst:1
 msgid "14"
-msgstr "14"
+msgstr ""
 
 #: ../../configuration.rst:1
 msgid "100"
-msgstr "100"
+msgstr ""
 
 #: ../../configuration.rst:1
 msgid "200"
-msgstr "200"
+msgstr ""
 
 #: ../../configuration.rst:90
 msgid "Alternate Configurations"
@@ -343,8 +348,9 @@ msgid ""
 "override the default configuration location and subsequent settings with those of the specified configuration."
 msgstr ""
 "默认情况下，pycsw在运行时加载的是 ``default.cfg`` 。加载一个配置，修改``csw.py``来指定所需配置。另外，pycsw还可以通过附加 "
-"``config=/path/to/default.cfg``到服务器的基础URL来显式定义一个配置，例如 ``http://localhost/pycsw/csw.py?config=tests/suites/"
-"default/default.cfg&service=CSW&version=2.0.2&request=GetCapabilities`` 。当 ``config`` 参数通过CSW客户端时，pycsw就会覆盖默认的"
+"``config=/path/to/default.cfg``到服务器的基础URL来显式定义一个配置，例如"
+" ``http://localhost/pycsw/csw.py?config=tests/suites/default/default.cfg&service=CSW&version=2.0.2&request=GetCapabilities`` 。"
+"当 ``config`` 参数通过CSW客户端时，pycsw就会覆盖默认的"
 "配置所在地址，并且用这些指定的配置来完成接下来的一系列设置。"
 
 #: ../../configuration.rst:94
@@ -370,8 +376,8 @@ msgid ""
 "One option is using Apache's ``Alias`` and ``SetEnvIf`` directives.  For example, given the base URL ``http://localhost/pycsw/"
 "csw.py?config=foo.cfg``, set the following in Apache's ``httpd.conf``:"
 msgstr ""
-"有一种选择是使用 Apache 的``Alias`` 和 ``SetEnvIf`` 指令。 例如，可以指定基 URL 'http://localhost/pycsw/csw.py?config=foo.cfg "
-"'，在 Apache 的 'httpd.conf' 下配置以下指令:"
+"有一种选择是使用 Apache 的 ``Alias`` 和 ``SetEnvIf`` 指令。 "
+"例如，可以指定基 URL ``http://localhost/pycsw/csw.py?config=foo.cfg`` ，在 Apache 的 ``httpd.conf`` 下配置以下指令:"
 
 #: ../../configuration.rst:113
 msgid "Apache must be restarted after changes to ``httpd.conf``"
@@ -383,7 +389,8 @@ msgid ""
 "in the base URL.  Note that the configuration value ``server.url`` value must match the ``Request_URI`` value so as to "
 "advertise correctly in pycsw's Capabilities XML."
 msgstr ""
-"pycsw 将以同样的方式配置设置 ``PYCSW_CONFIG`` 的环境变量，就如同它在基 URL 中指定了一样。 请注意，配置值 ``server.url`` 值必须匹"
+"pycsw 将以同样的方式配置设置 ``PYCSW_CONFIG`` 的环境变量，就如同它在基 URL 中指定了一样。 "
+"请注意，配置值 ``server.url`` 值必须匹"
 "配 ``Request_URI`` 值，这样在 pycsw 的功能 XML 中就可以做正确声明了。"
 
 #: ../../configuration.rst:118
@@ -394,4 +401,4 @@ msgstr "包装器脚本"
 msgid ""
 "Another option is to write a simple wrapper (e.g. ``csw-foo.sh``), which provides the same functionality and can be deployed "
 "without restarting Apache:"
-msgstr "另一个选择是编写一个简单的包装器 (如``csw-foo.sh``)，也会有相同的功能，而且无需重新启动 Apache 也可以部署:"
+msgstr "另一个选择是编写一个简单的包装器 (如 ``csw-foo.sh`` )，也会有相同的功能，而且无需重新启动 Apache 也可以部署:"

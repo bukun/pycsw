@@ -27,7 +27,7 @@ msgid ""
 "participate in pycsw community and development."
 msgstr ""
 "Pycsw 项目是开源的，欢迎贡献 （bug 报告、 bug 修复、 代码增强功能等）。 此篇文章将概述pycsw 的一些作"
-"用。 pycsw'社区' </community.html> _ ，就是提供一些建议，应该如何连接和参与 pycsw 社区，并如何更好地发"
+"用。 pycsw `community <http://pycsw.org/community/>`_ ，就是提供一些建议，应该如何连接和参与 pycsw 社区，并如何更好地发"
 "展。"
 
 #: ../../../CONTRIBUTING.rst:9
@@ -113,8 +113,8 @@ msgid ""
 "unclaimed copyright, by default, is assigned to the main copyright holders as specified in https://"
 "github.com/geopython/pycsw/blob/master/LICENSE.txt"
 msgstr ""
-"若无人声明版权所属，在默认情况下，会指定分配给主要的版权持有人，在https://github.com/geopython/pycsw/"
-"blob/master/LICENSE.txt中强调指出"
+"若无人声明版权所属，在默认情况下，会指定分配给主要的版权持有人，"
+"在 https://github.com/geopython/pycsw/blob/master/LICENSE.txt 中强调指出"
 
 #: ../../../CONTRIBUTING.rst:41
 msgid "Contributions and Licensing Agreement Template"
@@ -163,7 +163,7 @@ msgstr "`Sphinx`_ 作用是生成文档"
 
 #: ../../../CONTRIBUTING.rst:64
 msgid "See the `reStructuredText Primer <http://sphinx-doc.org/rest.html>`_ on rST markup and syntax."
-msgstr "在RST上的标记和语法中见 reStructuredText Primer<http://sphinx-doc.org/rest.html> 。"
+msgstr "在RST上的标记和语法中见 `reStructuredText Primer <http://sphinx-doc.org/rest.html>`_ 。"
 
 #: ../../../CONTRIBUTING.rst:67
 msgid "Bugs"
@@ -177,9 +177,9 @@ msgid ""
 "and platform. For convenience, you can run ``pycsw-admin.py -c get_sysprof`` and copy/paste the output "
 "into your issue."
 msgstr ""
-"<https://github.com/geopython/pycsw/issues> `_是pycsw问题跟踪器，是报告错误或要求改进的地方。当您提交出"
-"现的错误时，一定要指定您正在使用的pycsw版本，相应的组件，如何操作显示的错误信息，以及Python和平台的版"
-"本。为方便起见，你可以运行``pycsw-admin.py -c get_sysprof``，并将输出信息复制、粘贴到您的问题中。"
+"pycsw 的 `问题跟踪器 <https://github.com/geopython/pycsw/issues>`_ ，是报告错误或要求改进的地方。"
+"当您提交出现的错误时，一定要指定您正在使用的pycsw版本，相应的组件，如何操作显示的错误信息，以及Python和平台的版"
+"本。为方便起见，你可以运行 ``pycsw-admin.py -c get_sysprof``，并将输出信息复制、粘贴到您的问题中。"
 
 #: ../../../CONTRIBUTING.rst:72
 msgid "Forking pycsw"
@@ -191,7 +191,7 @@ msgid ""
 "pycsw/fork>`_ pycsw into your own GitHub repository to be able to commit your work and submit pull "
 "requests."
 msgstr ""
-"通过 GitHub pull 请求后，贡献是最容易管理的。 '叉<https: github.com/geopython/pycsw/fork>' _ pycsw 放到"
+"通过 GitHub pull 请求后，贡献是最容易管理的。 'Fork <https: github.com/geopython/pycsw/fork>' _ pycsw 放到"
 "你自己 GitHub 存储库中，这样可以轻松地提交你的工作，并提交pull请求。"
 
 #: ../../../CONTRIBUTING.rst:78
@@ -217,8 +217,8 @@ msgid ""
 "for trivial commits that do not need `Travis CI <https://travis-ci.org/geopython/pycsw>`_ to run, "
 "include ``[ci skip]`` as part of the commit message"
 msgstr ""
-"如果是一些琐碎的提交，就像是 ``[ci skip]`` 也是做为提交消息的一部分，则不需要运行`Travis CI <https://"
-"travis-ci.org/geopython/pycsw>`_"
+"如果是一些琐碎的提交，就像是 ``[ci skip]`` 也是做为提交消息的一部分，"
+"则不需要运行 `Travis CI <https://travis-ci.org/geopython/pycsw>`_ "
 
 #: ../../../CONTRIBUTING.rst:86
 msgid ""
@@ -234,7 +234,7 @@ msgstr "Git 提交应包括更改说明"
 
 #: ../../../CONTRIBUTING.rst:88
 msgid "Git commits shall include the GitHub issue number (i.e. ``#1234``) in the Git commit log message"
-msgstr "Git 提交应在Git 提交日志中写入 GitHub 问题编号 (例如 ' #1234 ')"
+msgstr "Git 提交应在Git 提交日志中写入 GitHub 问题编号 (例如 ``#1234`` )"
 
 #: ../../../CONTRIBUTING.rst:89
 msgid ""
@@ -270,14 +270,14 @@ msgid ""
 "always run source code through ``pep8`` and `pylint`_, using all pylint defaults except for "
 "``C0111``.  ``sbin/pycsw-pylint.sh`` is included for convenience"
 msgstr ""
-"应使用所有 pylint 默认设置的 ``pep8`` 与 `pylint`_，运行除了 ``C0111`` 的源代码。 ``sbin/pycsw-pylint."
-"sh`` 是为了方便起见"
+"应使用所有 pylint 默认设置的 ``pep8`` 与 `pylint`_，运行除了 ``C0111`` 的源代码。"
+"``sbin/pycsw-pylint.sh`` 是为了方便起见"
 
 #: ../../../CONTRIBUTING.rst:99
 msgid ""
 "for exceptions which make their way to OGC ``ExceptionReport`` XML, always specify the appropriate "
 "``locator`` and ``code`` parameters"
-msgstr "除了OGC  'ExceptionReport' XML运行方式为个别例外，通常会指定合适的 '定位器 '和' 代码 ' 参数"
+msgstr "除了OGC  ``ExceptionReport`` XML运行方式为个别例外，通常会指定合适的 '定位器 '和' 代码 ' 参数"
 
 #: ../../../CONTRIBUTING.rst:100
 msgid ""
@@ -301,9 +301,9 @@ msgid ""
 "required.  If changes are required, make them against the same branch and push as per above (all "
 "changes to the branch in the pull request apply)."
 msgstr ""
-"您的更改在 GitHub自己的 pycsw 存储库为可见状态。 现在你要创建pull请求。Pycsw的团队成员将审查你的pull请"
-"求，若您有需要，团队成员会提供给您反馈建议。 如果需要改动，要另立分支，并push以上步骤 （pull请求中所有"
-"更改的分支）。"
+"您的更改在 GitHub自己的 pycsw 存储库为可见状态。 现在你要创建pull请求。"
+"Pycsw的团队成员将审查你的pull请求，若您有需要，团队成员会提供给您反馈建议。"
+"如果需要改动，要另立分支，并push以上步骤 （pull请求中所有更改的分支）。"
 
 #: ../../../CONTRIBUTING.rst:133
 msgid ""

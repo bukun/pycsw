@@ -16,7 +16,7 @@ msgstr ""
 
 #: ../../transactions.rst:4 ../../transactions.rst:67
 msgid "Transactions"
-msgstr "订单"
+msgstr "事务"
 
 #: ../../transactions.rst:6
 msgid ""
@@ -24,8 +24,9 @@ msgid ""
 "``manager.transactions`` must be set to ``true``.  Access to transactional functionality is limited to IP addresses which must be "
 "set in ``manager.allowed_ips``."
 msgstr ""
-"pycsw可获取CSW和交易请求（CSW-T）。交易在默认情况下是禁用的；``manager.transactions``必须设置为值``是``。进入交易后，功能仅可以设"
-"置IP地址，IP地址必须在``manager.allowed_ips``中。"
+"pycsw可获取CSW和事务请求（CSW-T）。"
+"事务在默认情况下是禁用的； 要启用， ``manager.transactions`` 必须设置为值 ``true`` 。"
+" 进入事务后，功能仅可以设置IP地址，IP地址必须在 ``manager.allowed_ips`` 中。"
 
 #: ../../transactions.rst:9
 msgid "Supported Resource Types"
@@ -33,7 +34,7 @@ msgstr "支持的源类型"
 
 #: ../../transactions.rst:11
 msgid "For transactions and harvesting, pycsw supports the following metadata resource types by default:"
-msgstr "对于交易和获限，pycsw默认支持以下元数据源类型："
+msgstr "对于事务和获限，pycsw默认支持以下元数据源类型："
 
 #: ../../transactions.rst:1
 msgid "Resource Type"
@@ -57,7 +58,7 @@ msgstr "Dublin Core"
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/cat/csw/2.0.2``"
-msgstr "``http://www.opengis.net/cat/csw/2.0.2``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "yes"
@@ -65,11 +66,11 @@ msgstr "是"
 
 #: ../../transactions.rst:1
 msgid "FGDC"
-msgstr "FGDC"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/cat/csw/csdgm``"
-msgstr "``http://www.opengis.net/cat/csw/csdgm``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "GM03"
@@ -77,91 +78,91 @@ msgstr "GM03"
 
 #: ../../transactions.rst:1
 msgid "``http://www.interlis.ch/INTERLIS2.3``"
-msgstr "``http://www.interlis.ch/INTERLIS2.3``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "ISO 19139"
-msgstr "ISO 19139"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.isotc211.org/2005/gmd``"
-msgstr "``http://www.isotc211.org/2005/gmd``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "ISO GMI"
-msgstr "ISO GMI"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.isotc211.org/2005/gmi``"
-msgstr "``http://www.isotc211.org/2005/gmi``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:CSW 2.0.2"
-msgstr "OGC:CSW 2.0.2"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:WMS 1.1.1/1.3.0"
-msgstr "OGC:WMS 1.1.1/1.3.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/wms``"
-msgstr "``http://www.opengis.net/wms``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:WMTS 1.0.0"
-msgstr "OGC:WMTS 1.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/wmts/1.0``"
-msgstr "``http://www.opengis.net/wmts/1.0``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:WFS 1.0.0/1.1.0/2.0.0"
-msgstr "OGC:WFS 1.0.0/1.1.0/2.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/wfs``"
-msgstr "``http://www.opengis.net/wfs``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:WCS 1.0.0"
-msgstr "OGC:WCS 1.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/wcs``"
-msgstr "``http://www.opengis.net/wcs``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:WPS 1.0.0"
-msgstr "OGC:WPS 1.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/wps/1.0.0``"
-msgstr "``http://www.opengis.net/wps/1.0.0``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:SOS 1.0.0"
-msgstr "OGC:SOS 1.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/sos/1.0``"
-msgstr "``http://www.opengis.net/sos/1.0``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "OGC:SOS 2.0.0"
-msgstr "OGC:SOS 2.0.0"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``http://www.opengis.net/sos/2.0``"
-msgstr "``http://www.opengis.net/sos/2.0``"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "`WAF`_"
-msgstr "`WAF`_"
+msgstr ""
 
 #: ../../transactions.rst:1
 msgid "``urn:geoss:urn``"
-msgstr "``urn:geoss:urn``"
+msgstr ""
 
 #: ../../transactions.rst:31
 msgid "Additional metadata models are supported by enabling the appropriate :ref:`profiles`."
@@ -243,7 +244,7 @@ msgstr "删除：针对``CSW：Constraint``进行删除"
 msgid ""
 "Transaction operation results can be sent by email (via ``mailto:``) or ftp (via ``ftp://``) if the Transaction request specifies "
 "``csw:ResponseHandler``."
-msgstr "若交易请求指定于``csw:ResponseHandler``，可通过email ( ``mailto:``) 或ftp（``FTP：//``）发送交易操作的结果."
+msgstr "若事务请求指定于``csw:ResponseHandler``，可通过email ( ``mailto:``) 或ftp（``FTP：//``）发送事务操作的结果."
 
 #: ../../transactions.rst:77
 msgid "The :ref:`tests` contain CSW-T request examples."

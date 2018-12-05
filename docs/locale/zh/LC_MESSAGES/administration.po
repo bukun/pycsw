@@ -25,7 +25,7 @@ msgid ""
 "admin.py`` is installed as part of the pycsw install process and should be "
 "available in your PATH."
 msgstr ""
-"pycsw管理由 ``pycsw-admin.py``实用程序处理. ``pycsw-admin.py`` 是作为 pycsw 安装"
+"pycsw管理由 ``pycsw-admin.py`` 实用程序处理。 ``pycsw-admin.py`` 是作为 pycsw 安装"
 "过程的一部分安装到系统，可在你的路径中使用。"
 
 #: ../../administration.rst:11
@@ -44,11 +44,11 @@ msgstr "pycsw支持以下数据库："
 
 #: ../../administration.rst:18
 msgid "SQLite3"
-msgstr "SQLite3"
+msgstr ""
 
 #: ../../administration.rst:19 ../../administration.rst:114
 msgid "PostgreSQL"
-msgstr "PostgreSQL"
+msgstr ""
 
 #: ../../administration.rst:20
 msgid "PostgreSQL with PostGIS enabled"
@@ -56,7 +56,7 @@ msgstr "带有 PostGIS 扩展的 PostgreSQL"
 
 #: ../../administration.rst:21
 msgid "MySQL"
-msgstr "MySQL"
+msgstr ""
 
 #: ../../administration.rst:24
 msgid ""
@@ -125,8 +125,8 @@ msgid ""
 "If PostGIS is detected, the pycsw-admin.py script does not create the SFSQL "
 "tables as they are already in the database."
 msgstr ""
-"如检测到PostGIS， pycsw-admin.py 脚本就不会再创建 SFSQL 表，因为数据库中已经存在"
-"了。"
+"如检测到PostGIS， pycsw-admin.py 脚本就不会再创建 SFSQL 表，"
+"因为数据库中已经存在了。"
 
 #: ../../administration.rst:71
 msgid "Loading Records"
@@ -141,8 +141,8 @@ msgid ""
 "Note that ``-p`` accepts either a directory path or single file."
 msgstr ""
 "这时所有的 ``*.xml`` 记录就会从 ``/path/to/records`` 导入到 ``default.cfg`` 中指"
-"定的数据库 (``repository.database``)。将 ``-r`` 传递到脚本中， 程序 ``/path/to/"
-"records`` 就会递归运行。将 ``-y`` 传递到脚本中， 程序 ``/path/to/records`` 将强制"
+"定的数据库 (``repository.database``)。将 ``-r`` 传递到脚本中， "
+"程序 ``/path/to/records`` 就会递归运行。将 ``-y`` 传递到脚本中， 程序 ``/path/to/records`` 将强制"
 "替换现有的相同元数据标识符。请注意， ``-p`` 只能接受一个目录路径或单个文件。"
 
 #: ../../administration.rst:80
@@ -248,7 +248,7 @@ msgid ""
 "versions of pycsw will automate this process"
 msgstr ""
 "当从普通的数据库plain PostgreSQL移入PostGIS时， 为了启用本地geometry支持，需要手"
-"动创建一个名为\"wkb_geometry\"的“GEOMETRY”栏（随着 ``pycsw.admin.setup_db`` 一起"
+"动创建一个名为 \"wkb_geometry\" 的 \"GEOMETRY\" 列（随着 ``pycsw.admin.setup_db`` 一起"
 "更新）。本地geometries也必须在 `WKT`_ 中手动填充。pycsw的下一个版本就会将此过程自"
 "动化运行"
 
@@ -273,14 +273,14 @@ msgstr "覆盖默认的配置："
 
 #: ../../administration.rst:138
 msgid "define a custom database mapping based on ``etc/mappings.py``"
-msgstr "定于基于``etc/mappings.py`` 数据库映射"
+msgstr "定于基于 ``etc/mappings.py`` 数据库映射"
 
 #: ../../administration.rst:139
 msgid ""
 "in ``default.cfg``, set ``repository.mappings`` to the location of the mappings."
 "py file:"
 msgstr ""
-"在 ``default.cfg``中，设置 ``repository.mappings`` 为 mappings.py 文件的位置："
+"在 ``default.cfg`` 中，设置 ``repository.mappings`` 为 mappings.py 文件的位置："
 
 #: ../../administration.rst:147
 msgid "Note you can also reference mappings as a Python object as a dotted path:"
@@ -310,31 +310,30 @@ msgid ""
 "``pycsw:Typename``: typename for the metadata; typically the value of the root "
 "element tag (e.g. ``csw:Record``, ``gmd:MD_Metadata``)"
 msgstr ""
-"``pycsw:Typename``: 元数据的类型名；典型的根标签值（例如``csw:Record``, ``gmd:"
-"MD_Metadata``）"
+"``pycsw:Typename``: 元数据的类型名；典型的根标签值（例如 ``csw:Record`` , ``gmd:MD_Metadata`` ）"
 
 #: ../../administration.rst:165
 msgid ""
 "``pycsw:Schema``: schema for the metadata; typically the target namespace (e.g. "
 "``http://www.opengis.net/cat/csw/2.0.2``, ``http://www.isotc211.org/2005/gmd``)"
 msgstr ""
-"``pycsw:Schema``: 元数据图表；典型的目标名称空间（例如``http://www.opengis.net/"
-"cat/csw/2.0.2``, ``http://www.isotc211.org/2005/gmd``）"
+"``pycsw:Schema``: 元数据图表；典型的目标名称空间"
+"（例如 ``http://www.opengis.net/cat/csw/2.0.2`` , ``http://www.isotc211.org/2005/gmd`` ）"
 
 #: ../../administration.rst:166
 msgid "``pycsw:InsertDate``: date of insertion"
-msgstr "``pycsw:InsertDate``: 插入日期"
+msgstr "``pycsw:InsertDate`` : 插入日期"
 
 #: ../../administration.rst:167
 msgid "``pycsw:XML``: full XML representation"
-msgstr "``pycsw:XML``:完整的XML表现形式"
+msgstr "``pycsw:XML`` :完整的XML表现形式"
 
 #: ../../administration.rst:168
 msgid ""
 "``pycsw:AnyText``: bag of XML element text values, used for full text search.  "
 "Realized with the following design pattern:"
 msgstr ""
-"``pycsw:AnyText``: XML元素文件值包，用于完整的文本搜索。采用以下设计模式实现："
+"``pycsw:AnyText`` : XML元素文件值包，用于完整的文本搜索。采用以下设计模式实现："
 
 #: ../../administration.rst:170
 msgid "capture all XML element and attribute values"
@@ -346,7 +345,7 @@ msgstr "存储数据库"
 
 #: ../../administration.rst:172
 msgid "``pycsw:BoundingBox``: string of `WKT`_ or `EWKT`_ geometry"
-msgstr "``pycsw:BoundingBox``: `WKT`_ or `EWKT`_ geometry字符串"
+msgstr "``pycsw:BoundingBox`` ：  `WKT`_ or `EWKT`_ geometry字符串"
 
 #: ../../administration.rst:174
 msgid "The following repository semantics exist if the attributes are specified:"
@@ -354,14 +353,14 @@ msgstr "如果指定了属性，则存在以下存储库语义："
 
 #: ../../administration.rst:176
 msgid "``pycsw:Keywords``: comma delimited list of keywords"
-msgstr "' pycsw:Keywords ': 以逗号分隔的关键字列表"
+msgstr "``pycsw:Keywords`` ： 以逗号分隔的关键字列表"
 
 #: ../../administration.rst:177
 msgid ""
 "``pycsw:Links``: structure of links in the format \"name,description,protocol,"
 "url[^,,,[^,,,]]\""
 msgstr ""
-"' pycsw:Links ': 链接的格式结构\"名称、 描述、 协议、 网页地址 [^，[^...]]\""
+"``pycsw:Links`` ： 链接的格式结构 \"name,description,protocol,url[^,,,[^,,,]]\" "
 
 #: ../../administration.rst:179
 msgid "Values of mappings can be derived from the following mechanisms:"
@@ -381,4 +380,4 @@ msgstr "Python 功能"
 
 #: ../../administration.rst:185
 msgid "Further information is provided in ``pycsw/config.py:MD_CORE_MODEL``."
-msgstr "在 'pycsw/config.py:MD_CORE_MODEL ' 中可获得更多资料。"
+msgstr "在 ``pycsw/config.py:MD_CORE_MODEL`` 中可获得更多资料。"
