@@ -98,7 +98,7 @@ For example:
     test_suites[default_post_GetRecords-end]
 
 
-Functional tests' implementation
+Functional tests implementation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Functional tests are generated for each suite directory present under 

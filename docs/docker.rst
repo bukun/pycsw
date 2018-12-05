@@ -43,7 +43,7 @@ Using pycsw-admin
 -----------------
 
 ``pycsw-admin`` can be executed on a running container by
-using ``docker exec``::
+using ``docker exec``:
 
     docker exec -ti <running-container-id> pycsw-admin.py -h
 

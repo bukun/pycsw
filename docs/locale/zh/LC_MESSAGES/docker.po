@@ -4,19 +4,20 @@
 # This file is distributed under the same license as the pycsw package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: pycsw 2.3-dev\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-03 22:09+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2018-12-05 09:01+0800\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 2.0.6\n"
+"Language: zh_CN\n"
 
 #: ../../docker.rst:2
 msgid "Docker"
@@ -26,19 +27,21 @@ msgstr ""
 msgid ""
 "pycsw is available as a Docker image. The image is hosted on the `Docker "
 "Hub`_."
-msgstr ""
+msgstr "pycsw可用作 Docker图像。图像被寄存在 `Docker Hub`_.上."
 
 #: ../../docker.rst:6
 msgid ""
 "Assuming you already have docker installed, you can get a pycsw instance "
 "up and running by issuing the following command::"
-msgstr ""
+msgstr "假设已经安装了docker，可以通过发出以下命令来启动和运行pycsw实例:"
 
 #: ../../docker.rst:11
 msgid ""
-"Docker will retrieve the pycsw image from Docker Hub (if needed) and then"
-" start a new container listening on port 8000."
+"Docker will retrieve the pycsw image from Docker Hub (if needed) and "
+"then start a new container listening on port 8000."
 msgstr ""
+"Docker将从 Docker集线器（如果需要）检索 pycsw 映像，然后在端口8000上启动"
+"侦听新容器."
 
 #: ../../docker.rst:14
 msgid ""
@@ -46,41 +49,45 @@ msgid ""
 "backend loaded with some test data from the CITE test suite. You can use "
 "this to take pycsw for a test drive."
 msgstr ""
+"默认配置将运行pycsw, sqlite存储库后端装载来自CITE测试套件的一些测试数据。"
+"您可以使用它来测试pycsw。"
 
 #: ../../docker.rst:20
 msgid "Inspect logs"
-msgstr ""
+msgstr "检查日志"
 
 #: ../../docker.rst:22
 msgid ""
 "The default configuration for the docker image outputs logs to stdout. "
-"This is common practice with docker containers and enables the inspection"
-" of logs with the ``docker logs`` command::"
+"This is common practice with docker containers and enables the "
+"inspection of logs with the ``docker logs`` command::"
 msgstr ""
+"Docker映像的默认配置将日志输出到stdout。这是对接容器的常见做法，并使 "
+"``docker logs`` 命令检查日志成为可能:"
 
 #: ../../docker.rst:38
 msgid ""
 "In order to have pycsw logs being sent to standard output you must set "
 "``server.logfile=`` in the pycsw configuration file."
 msgstr ""
+"为了将pycsw日志发送到标准输出，必须在pycsw配置文件中设置 ``server.logfile=``."
 
 #: ../../docker.rst:43
 msgid "Using pycsw-admin"
-msgstr ""
+msgstr "使用PYCSW管理"
 
 #: ../../docker.rst:45
 msgid ""
-"``pycsw-admin`` can be executed on a running container by using ``docker "
-"exec``::"
-msgstr ""
+"``pycsw-admin`` can be executed on a running container by using ``docker exec``: "
+msgstr "``pycsw-admin``可以在运行的容器上使用 ``docker exec``执行:"
 
 #: ../../docker.rst:52
 msgid "Running custom pycsw containers"
-msgstr ""
+msgstr "运行自定义PysCW容器"
 
 #: ../../docker.rst:55
 msgid "pycsw configuration"
-msgstr ""
+msgstr "pycsw 配置"
 
 #: ../../docker.rst:57
 msgid ""
@@ -89,78 +96,91 @@ msgid ""
 "configuration file is searched at the value of the ``PYCSW_CONFIG`` "
 "environmental variable, which defaults to ``/etc/pycsw/pycsw.cfg``."
 msgstr ""
+"可以为pycsw提供自定义配置文件作为绑定安装或作为docker秘密（在docker群集的"
+"情况下）。配置文件在 ``PYCSW_CONFIG``环境变量的值处进行搜索，该环境变量默"
+"认为``/etc/pycsw/pycsw.cfg``."
 
 #: ../../docker.rst:62
 msgid "Supplying the configuration file via bind mount::"
-msgstr ""
+msgstr "通过绑定安装提供配置文件：："
 
 #: ../../docker.rst:71
 msgid "Supplying the configuration file via docker secrets::"
-msgstr ""
+msgstr "通过docker 机密提供配置文件::"
 
 #: ../../docker.rst:83
 msgid "sqlite repositories"
-msgstr ""
+msgstr "sqlite 存储库"
 
 #: ../../docker.rst:85
 msgid ""
 "The default database repository is the CITE database that is used for "
 "running pycsw's test suites. Docker volumes may be used to specify a "
-"custom sqlite database path. It should be mounted under "
-"``/var/lib/pycsw``::"
+"custom sqlite database path. It should be mounted under ``/var/lib/"
+"pycsw``::"
 msgstr ""
+"默认的数据库存储库是用于运行pycsw测试套件的CITE数据库。Docker卷可以用来指"
+"定自定义sqlite数据库路径。它应该安装在 ``/var/lib/pycsw``::"
 
 #: ../../docker.rst:100
 msgid "PostgreSQL repositories"
-msgstr ""
+msgstr "PostgreSQL存储库"
 
 #: ../../docker.rst:102
 msgid ""
 "Specifying a PostgreSQL repository is just a matter of configuring a "
 "custom pycsw.cfg file with the correct specification."
 msgstr ""
+"指定PostgreSQL存储库只是用正确的规范配置自定义pycsw.cfg 文件的问题。"
 
 #: ../../docker.rst:105
 msgid ""
-"Check `pycsw's github repository`_ for an example of a docker-"
-"compose/stack file that spins up a postgis database together with a pycsw"
-" instance."
+"Check `pycsw's github repository`_ for an example of a docker-compose/"
+"stack file that spins up a postgis database together with a pycsw "
+"instance."
 msgstr ""
+"查看 `pycsw's github repository`_ ，例如 docker-compose/stack文件，该文件将"
+"postgis数据库与pycsw实例一起旋转。"
 
 #: ../../docker.rst:110
 msgid "Setting up a development environment with docker"
-msgstr ""
+msgstr "用docker建立开发环境"
 
 #: ../../docker.rst:112
 msgid ""
-"Working on pycsw's code using docker enables an isolated environment that"
-" helps ensuring reproducibility while at the same time keeping your base "
-"system free from pycsw related dependencies. This can be achieved by:"
+"Working on pycsw's code using docker enables an isolated environment "
+"that helps ensuring reproducibility while at the same time keeping your "
+"base system free from pycsw related dependencies. This can be achieved "
+"by:"
 msgstr ""
+"使用docker处理pycsw的代码可以实现一个隔离的环境，它有助于确保可重现性,同"
+"时使您的基本系统免受pycsw相关依赖项的影响。这可以通过以下方式实现:"
 
 #: ../../docker.rst:116
 msgid "Cloning pycsw's repository locally;"
-msgstr ""
+msgstr "在本地克隆pycsw的储存库；"
 
 #: ../../docker.rst:117
 msgid ""
 "Starting up a docker container with appropriately set up bind mounts. In "
-"addition, the pycsw docker image supports a ``reload`` flag that turns on"
-" automatic reloading of the gunicorn web server whenever the code "
+"addition, the pycsw docker image supports a ``reload`` flag that turns "
+"on automatic reloading of the gunicorn web server whenever the code "
 "changes;"
 msgstr ""
+"使用适当的绑定安装启动docker容器。此外，pycsw docker映像支持``reload`` 标"
+"志，当代码发生变化时，该标志将自动重新加载gunicorn web服务器;"
 
 #: ../../docker.rst:120
 msgid ""
-"Installing the development dependencies by using ``docker exec`` with the"
-" root user;"
-msgstr ""
+"Installing the development dependencies by using ``docker exec`` with "
+"the root user;"
+msgstr "与root用户一起使用``docker exec`` 安装开发依赖项;"
 
 #: ../../docker.rst:123
 msgid ""
 "The following instructions set up a fully working development "
 "environment::"
-msgstr ""
+msgstr "以下说明建立了一个完整工作的开发环境:"
 
 #: ../../docker.rst:157
 msgid ""
@@ -168,6 +188,8 @@ msgid ""
 "does not install pycsw in editable mode. As such it is not possible to "
 "use ``tox``."
 msgstr ""
+"请注意，pycsw映像只使用python 3.5，而且它也不以可编辑模式安装pycsw。因"
+"此，不可能使用``tox``."
 
 #: ../../docker.rst:161
 msgid ""
@@ -175,4 +197,5 @@ msgid ""
 "container, after building the docs you may inspect their content "
 "visually, for example by running::"
 msgstr ""
-
+"由于docs目录是从主机绑定到容器中的，所以在构建docs之后，您可以可视化地检"
+"查它们的内容，例如，通过运行::"

@@ -24,7 +24,7 @@ various/missing/default version parameters.
 Request Examples
 ----------------
 
-The best place to look for sample requests is within the `tests/` directory,
+The best place to look for sample requests is within the ``tests/`` directory,
 which provides numerous examples of all supported APIs and requests.
 
 Additional examples:
