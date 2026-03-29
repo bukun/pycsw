@@ -3,12 +3,15 @@
 Introduction
 ============
 
-pycsw is an OARec and OGC CSW server implementation written in Python.
+pycsw is an OGC API - Records and OGC CSW server implementation written in Python.
 
 Features
 ========
 
 - implements `OGC API - Records - Part 1: Core`_
+- implements `OGC API - Features - Part 3: Filtering`_
+- implements `STAC API`_
+- implements `Common Query Language (CQL2)`_
 - certified OGC `Compliant`_ and OGC Reference Implementation for both CSW 2.0.2 and CSW 3.0.0
 - harvesting support for WMS, WFS, WCS, WPS, WAF, CSW, SOS
 - implements `INSPIRE Discovery Services 3.0`_
@@ -18,10 +21,11 @@ Features
 - implements Full Text Search capabilities
 - implements OGC OpenSearch Geo and Time Extensions
 - implements Open Archives Initiative Protocol for Metadata Harvesting
-- supports ISO, Dublin Core, DIF, FGDC, Atom and GM03 metadata models
+- implements Pub/Sub capability via `OGC API Publish-Subscribe Workflow - Part 1: Core`_
+- supports ISO, Dublin Core, DIF, FGDC, Atom, GM03 and DataCite metadata models
 - CGI or WSGI deployment
-- simple configuration
-- transactional capabilities (CSW-T)
+- simple YAML configuration
+- transactional capabilities (OGC API - Records and CSW-T)
 - flexible repository configuration
 - `GeoNode`_ connectivity
 - `HHypermap`_ connectivity
@@ -38,12 +42,15 @@ Standards Support
   :header: Standard,Version(s)
 
   `OGC API - Records - Part 1: Core`_,1.0
-  `OGC API - Features - Part 3: Filtering and the Common Query Language (CQL)`_,draft
+  `OGC API - Features - Part 3: Filtering`_,draft
+  "`OGC API - Features - Part 4: Create, Replace, Update and Delete`_",draft
+  `OGC API Publish-Subscribe Workflow - Part 1: Core`_,draft
   `OGC CSW`_,2.0.2/3.0.0
   `OGC Filter`_,1.1.0/2.0.0
   `OGC OWS Common`_,1.0.0/2.0.0
   `OGC GML`_,3.1.1
   `OGC SFSQL`_,1.2.1
+  `OGC GeoRSS`_,1.0
   `Dublin Core`_,1.1
   `SOAP`_,1.2
   `ISO 19115`_,2003
@@ -55,6 +62,7 @@ Standards Support
   `SRU`_,1.1
   `OGC OpenSearch`_,1.0
   `OAI-PMH`_,2.0
+  `DataCite`_,4.3
 
 OGC API - Records support
 -------------------------
@@ -64,7 +72,13 @@ OGC API - Records support
 OGC API - Features support
 --------------------------
 
-- Part 3: Filtering and the Common Query Language (CQL)
+- Part 3: Filtering
+- Part 4: Create, Replace, Update and Delete
+
+CQL
+---
+
+- Common Query Language (CQL2)
 
 Supported Output Formats
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -77,7 +91,7 @@ Supported Filters
 
 - q
 - datetime
-- filter (CQL)
+- filter / filter-lang (CQL)
 - bbox
 - all properties (``property=value``)
 
@@ -129,6 +143,7 @@ Supported Output Schemas
 - NASA DIF
 - Atom
 - GM03
+- DataCite
 
 Supported Sorting Functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -195,8 +210,34 @@ Functions
 - trim
 - upper
 
+OAI-PMH Support
+---------------
+
+Supported Operations
+^^^^^^^^^^^^^^^^^^^^
+
+- GetRecord
+- Identify
+- ListIdentifiers
+- ListMetadataFormats
+- ListRecords
+- ListSets
+
+Supported Filters
+^^^^^^^^^^^^^^^^^
+
+- from
+- until
+- set
+
+Paging
+^^^^^^
+
+- resumptionToken
+
 .. _`OGC API - Records - Part 1: Core`: https://ogcapi.ogc.org/records
-.. _`OGC API - Features - Part 3: Filtering and the Common Query Language (CQL)`: http://docs.ogc.org/DRAFTS/19-079.html
+.. _`OGC API - Features - Part 3: Filtering`: http://docs.ogc.org/DRAFTS/19-079.html
+.. _`Common Query Language (CQL2)`: https://docs.ogc.org/DRAFTS/21-065.html
 .. _`OGC CSW`: https://www.ogc.org/standards/cat
 .. _`ISO Metadata Application Profile 1.0.0`: https://portal.ogc.org/files/?artifact_id=21460
 .. _`OGC Filter`: https://www.ogc.org/standards/filter
@@ -205,6 +246,7 @@ Functions
 .. _`OGC SFSQL`: https://www.ogc.org/standards/sfs
 .. _`Dublin Core`: https://www.dublincore.org/
 .. _`OGC CITE CSW`: https://github.com/opengeospatial/ets-csw202
+.. _`OGC GeoRSS`: http://docs.opengeospatial.org/cs/17-002r1/17-002r1.html
 .. _`SOAP`: https://www.w3.org/TR/soap/
 .. _`INSPIRE Discovery Services 3.0`: https://inspire.jrc.ec.europa.eu/documents/Network_Services/TechnicalGuidance_DiscoveryServices_v3.0.pdf
 .. _`ISO 19115`: https://www.iso.org/iso/catalogue_detail.htm?csnumber=26020
@@ -222,3 +264,8 @@ Functions
 .. _`Compliant`: https://www.ogc.org/resource/products/details/?pid=1374
 .. _`OAI-PMH`: https://www.openarchives.org/pmh/
 .. _`GM03`: https://www.geocat.admin.ch/en/dokumentation/gm03.html
+.. _`OGC API - Features - Part 4: Create, Replace, Update and Delete`: https://cnn.com
+.. _`DataCite`: https://schema.datacite.org/meta/kernel-4.3/
+.. _`OGC API Publish-Subscribe Workflow - Part 1: Core`: https://docs.ogc.org/DRAFTS/25-030.html
+.. _`STAC API`: https://github.com/radiantearth/stac-api-spec
+

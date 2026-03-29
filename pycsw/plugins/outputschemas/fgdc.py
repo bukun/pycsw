@@ -3,7 +3,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2015 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -151,7 +151,7 @@ def write_record(recobj, esn, context, url=None):
     rlinks = util.getqattr(recobj, context.md_core_model['mappings']['pycsw:Links'])
     if rlinks:
         for link in util.jsonify_links(rlinks):
-            etree.SubElement(citeinfo, 'onlink', type=linkset[2]).text = link['url']
+            etree.SubElement(citeinfo, 'onlink', type=link['protocol']).text = link['url']
 
     # metd
     metainfo = etree.SubElement(node, 'metainfo')
@@ -166,7 +166,8 @@ def write_extent(bbox):
     if bbox is not None:
         try:
             bbox2 = util.wkt2geom(bbox)
-        except:
+        except Exception as err:
+            LOGGER.debug(f'Geometry parsing error: {err}')
             return None
 
         spdom = etree.Element('spdom')

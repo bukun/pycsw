@@ -3,7 +3,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2022 Tom Kralidis
+# Copyright (c) 2026 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -39,12 +39,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
-
-try:
-    from unittest.mock import MagicMock
-except ImportError:
-    from mock import Mock as MagicMock
+import sys
+from unittest.mock import MagicMock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -67,7 +63,7 @@ extensions = []
 templates_path = ['_templates']
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = {'.rst': 'restructuredtext'}
 
 locale_dirs = ['locale/'] # path is example but recommended.
 
@@ -81,15 +77,14 @@ master_doc = 'index'
 project = u'pycsw'
 authors = u'Tom Kralidis'
 license = u'This work is licensed under a Creative Commons Attribution 4.0 International License'
-copyright = u'2010-2022, ' + authors + ' ' + license
+copyright = u'2010-2026, ' + authors + ' ' + license
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-with open('../VERSION.txt') as f:
-    version = f.read().strip()
+version = '3.0-dev'
 # The full version, including alpha/beta/rc tags.
 release = version
 

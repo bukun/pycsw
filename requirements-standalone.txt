@@ -1,4 +1,6 @@
-SQLAlchemy
+SQLAlchemy<2.0.0
 Flask
+Jinja2
 pygeofilter
 PyYAML
+pygeoif

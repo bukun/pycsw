@@ -5,7 +5,7 @@
 #          Angelos Tzotsos <tzotsos@gmail.com>
 #          Ricardo Garcia Silva <ricardo.garcia.silva@gmail.com>
 #
-# Copyright (c) 2015 Tom Kralidis
+# Copyright (c) 2025 Tom Kralidis
 # Copyright (c) 2015 Angelos Tzotsos
 # Copyright (c) 2017 Ricardo Garcia Silva
 #
@@ -33,15 +33,21 @@
 # =================================================================
 
 from configparser import BasicInterpolation, ConfigParser
+from pathlib import Path
+import importlib
+import importlib.util
 import json
 import os
 import re
 import datetime
 import logging
+import sys
 import time
+import typing
 
 from urllib.request import Request, urlopen
 from urllib.parse import urlparse
+from shapely.geometry import shape
 from shapely.wkt import loads
 from owslib.util import http_post
 
@@ -162,7 +168,7 @@ def nspath_eval(xpath, nsmap):
         elif len(chunks) == 1:
             out.append(node)
         else:
-            raise RuntimeError("Invalid XPath expression: {0}".format(xpath))
+            raise RuntimeError(f"Invalid XPath expression: {xpath}")
     return '/'.join(out)
 
 
@@ -172,6 +178,13 @@ def wktenvelope2bbox(envelope):
     tmparr = [x.strip() for x in envelope.split('(')[1].split(')')[0].split(',')]
     bbox = '%s,%s,%s,%s' % (tmparr[0], tmparr[3], tmparr[1], tmparr[2])
     return bbox
+
+
+def geojson_geometry2bbox(geometry):
+    """returns bbox string of GeoJSON geometry"""
+
+    bounds = shape(geometry).bounds
+    return ','.join([str(b) for b in bounds])
 
 
 def wkt2geom(ewkt, bounds=True):
@@ -189,8 +202,9 @@ def wkt2geom(ewkt, bounds=True):
     Returns
     -------
     shapely.geometry.base.BaseGeometry or tuple
-        Depending on the value of the ``bounds`` parameter, returns either 
-        the shapely geometry instance or a tuple with the bounding box.
+
+    Depending on the value of the ``bounds`` parameter, returns either
+    the shapely geometry instance or a tuple with the bounding box.
 
     References
     ----------
@@ -220,11 +234,13 @@ def bbox2wktpolygon(bbox):
 
     """
 
+    precision = int(os.environ.get('COORDINATE_PRECISION', 2))
     if bbox.startswith('ENVELOPE'):
         bbox = wktenvelope2bbox(bbox)
-    minx, miny, maxx, maxy = [float(coord) for coord in bbox.split(",")]
-    return 'POLYGON((%.2f %.2f, %.2f %.2f, %.2f %.2f, %.2f %.2f, %.2f %.2f))' \
+    minx, miny, maxx, maxy = [f"{float(coord):.{precision}f}" for coord in bbox.split(",")]
+    wktGeometry = 'POLYGON((%s %s, %s %s, %s %s, %s %s, %s %s))' \
         % (minx, miny, minx, maxy, maxx, maxy, maxx, miny, minx, miny)
+    return wktGeometry
 
 
 def transform_mappings(queryables, typename):
@@ -328,8 +344,8 @@ def ipaddress_in_whitelist(ipaddress, whitelist):
                 if ip_in_network_cidr(ipaddress, white):
                     return True
             elif white.find('*') != -1:  # subnet wildcard
-                    if ipaddress.startswith(white.split('*')[0]):
-                        return True
+                if ipaddress.startswith(white.split('*')[0]):
+                    return True
     return False
 
 
@@ -347,6 +363,27 @@ def get_anytext(bag):
             bag = etree.fromstring(bag, PARSER)
         # get all XML element content
         return ' '.join([value.strip() for value in bag.xpath('//text()')])
+
+
+# https://stackoverflow.com/a/39234154
+def get_anytext_from_obj(obj):
+    """
+    generate bag of text for free text searches
+    accepts dict, list or string
+    """
+
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if isinstance(value, (list, dict)):
+                yield from get_anytext_from_obj(value)
+            else:
+                yield value
+    elif isinstance(obj, list):
+        for value in obj:
+            if isinstance(value, (list, dict)):
+                yield from get_anytext_from_obj(value)
+            else:
+                yield value
 
 
 # https://github.com/pallets/werkzeug/blob/778f482d1ac0c9e8e98f774d2595e9074e6984d7/werkzeug/utils.py#L253
@@ -393,6 +430,7 @@ def secure_filename(filename):
 
     return filename
 
+
 def jsonify_links(links):
     """
     pycsw:Links column data handler.
@@ -402,7 +440,7 @@ def jsonify_links(links):
         LOGGER.debug('JSON link')
         linkset = json.loads(links)
         return linkset
-    except json.decoder.JSONDecodeError as err:  # try CSV parsing
+    except json.decoder.JSONDecodeError:  # try CSV parsing
         LOGGER.debug('old style CSV link')
         json_links = []
         for link in links.split('^'):
@@ -455,3 +493,81 @@ def is_none_or_empty(value):
         return True
 
     return False
+
+
+def programmatic_import(target_module: str) -> typing.Optional[typing.Any]:
+    result = None
+    target_module_path = Path(target_module)
+    if target_module_path.is_file():
+        module_name = target_module_path.stem
+        # this is an adaptation of the Python docs on using importlib to import a
+        # filepath:
+        # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
+        spec = importlib.util.spec_from_file_location(
+            module_name, target_module_path)
+        if spec is not None:
+            module = importlib.util.module_from_spec(spec)
+            sys.modules[module_name] = module
+            spec.loader.exec_module(module)
+            result = module
+    else:
+        try:
+            result = importlib.import_module(target_module)
+        except ModuleNotFoundError:
+            pass
+    return result
+
+
+def load_custom_repo_mappings(repository_mappings: str) -> typing.Optional[typing.Dict]:
+    imported_mappings_module = programmatic_import(repository_mappings)
+    result = None
+    if imported_mappings_module is not None:
+        result = getattr(imported_mappings_module, "MD_CORE_MODEL", None)
+    return result
+
+
+def sanitize_db_connect (url):
+    """
+    helper function to remove user:pw from db connect for logging purposes
+
+    :param url: value to be sanitized
+
+    :returns: `str` sanitized
+    """
+    if '@' in url:
+        return url.split('://')[0] + '://***:***@' + url.split('@').pop()
+    else:
+        return url
+
+def str2bool(value: typing.Union[bool, str]) -> bool:
+    """
+    helper function to return Python boolean
+    type (source: https://stackoverflow.com/a/715468)
+
+    :param value: value to be evaluated
+
+    :returns: `bool` of whether the value is boolean-ish
+    """
+
+    value2 = False
+
+    if isinstance(value, bool):
+        value2 = value
+    else:
+        value2 = value.lower() in ('yes', 'true', 't', '1', 'on')
+
+    return value2
+
+
+def remove_url_auth(url: str) -> str:
+    """
+    Provide a RFC1738 URL without embedded authentication
+
+    :param url: RFC1738 URL
+
+    :returns: RFC1738 URL without authentication
+    """
+
+    u = urlparse(url)
+    auth = f'{u.username}:{u.password}@'
+    return url.replace(auth, '')

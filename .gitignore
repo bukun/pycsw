@@ -26,3 +26,11 @@ tests/results
 
 # compiled file for *.po.
 *.mo
+
+# virtual environments
+.venv
+
+# visual studio code workspace
+*.code-workspace
+.vscode/settings.json
+.vscode/launch.json

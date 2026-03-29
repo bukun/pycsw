@@ -1,8 +1,10 @@
 # =================================================================
 #
 # Authors: Ricardo Garcia Silva <ricardo.garcia.silva@gmail.com>
+# Authors: Tom Kralidis
 #
 # Copyright (c) 2017 Ricardo Garcia Silva
+# Copyright (c) 2025 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -31,9 +33,11 @@
 import datetime as dt
 import os
 import time
+from pathlib import Path
+from unittest import mock
 
-import mock
 import pytest
+from shapely import from_geojson
 from shapely.wkt import loads
 
 from pycsw.core import util
@@ -85,6 +89,7 @@ def test_get_version_integer_invalid_version(invalid_version):
     with pytest.raises(RuntimeError):
         util.get_version_integer(invalid_version)
 
+
 @pytest.mark.parametrize("xpath_expression, expected", [
     ("ns1:first", "{something}first"),
     ("ns1:first/ns2:second", "{something}first/{other}second"),
@@ -113,6 +118,7 @@ def test_nspath_eval_invalid_element():
             }
         )
 
+
 @pytest.mark.parametrize("envelope, expected", [
     ("ENVELOPE (-180,180,90,-90)", "-180,-90,180,90"),
     (" ENVELOPE(-180,180,90,-90)", "-180,-90,180,90"),
@@ -121,6 +127,7 @@ def test_nspath_eval_invalid_element():
 def test_wktenvelope2bbox(envelope, expected):
     result = util.wktenvelope2bbox(envelope)
     assert result == expected
+
 
 # TODO - Add more WKT cases for other geometry types
 @pytest.mark.parametrize("wkt, bounds, expected", [
@@ -144,7 +151,7 @@ def test_wkt2geom(wkt, bounds, expected):
         "-10.0, 10.0, 30.0, 15.0",
         "POLYGON((-10.00 10.00, -10.00 15.00, 30.00 15.00, "
         "30.00 10.00, -10.00 10.00))"
-    ),
+    )
 ])
 def test_bbox2wktpolygon(bbox, expected):
     result = util.bbox2wktpolygon(bbox)
@@ -191,8 +198,8 @@ def test_getqattr_link():
 
 
 def test_getqattr_invalid():
-        result = util.getqattr(dt.date(2017, 1, 1), "name")
-        assert result is None
+    result = util.getqattr(dt.date(2017, 1, 1), "name")
+    assert result is None
 
 
 def test_http_request_post():
@@ -249,6 +256,7 @@ def test_ipaddress_in_whitelist(ip, whitelist, expected):
     result = util.ipaddress_in_whitelist(ip, whitelist)
     assert result == expected
 
+
 @pytest.mark.parametrize("linkstr, expected", [
     # old style CSV
     ("roads,my roads,OGC:WMS,http://example.org/wms",
@@ -284,7 +292,7 @@ def test_ipaddress_in_whitelist(ip, whitelist, expected):
          "description": "my roads",
          "protocol": "OGC:WMS",
          "url": "http://example.org/wms"
-      },{
+      }, {
          "name": "roads",
          "description": "my roads",
          "protocol": "OGC:WFS",
@@ -302,28 +310,28 @@ def test_ipaddress_in_whitelist(ip, whitelist, expected):
     ),
     # JSON style with some empty keys
     ('[{"name": "roads", "description": null, "protocol": "OGC:WMS", "url": "http://example.org/wms"}]',
-     [{
-         "name": "roads",
-         "description": None,
-         "protocol": "OGC:WMS",
-         "url": "http://example.org/wms"
-      }]
+        [{
+            "name": "roads",
+            "description": None,
+            "protocol": "OGC:WMS",
+            "url": "http://example.org/wms"
+        }]
     ),
     # JSON style with multiple links
     ('[{"name": "roads", "description": null, "protocol": "OGC:WMS", "url": "http://example.org/wms"},'
      '{"name": "roads", "description": null, "protocol": "OGC:WFS", "url": "http://example.org/wfs"}]',
-     [{
-         "name": "roads",
-         "description": None,
-         "protocol": "OGC:WMS",
-         "url": "http://example.org/wms"
-      },{
-         "name": "roads",
-         "description": None,
-         "protocol": "OGC:WFS",
-         "url": "http://example.org/wfs"
-      }]
-    )
+        [{
+            "name": "roads",
+            "description": None,
+            "protocol": "OGC:WMS",
+            "url": "http://example.org/wms"
+         }, {
+            "name": "roads",
+            "description": None,
+            "protocol": "OGC:WFS",
+            "url": "http://example.org/wfs"
+        }]
+     )
 ])
 def test_jsonify_links(linkstr, expected):
     result = util.jsonify_links(linkstr)
@@ -340,3 +348,92 @@ def test_jsonify_links(linkstr, expected):
 ])
 def test_is_none_or_empty(value, result):
     assert util.is_none_or_empty(value) is result
+
+
+@pytest.mark.parametrize("import_path, expected_attribute", [
+    pytest.param("itertools", "count", id="import from stdlib"),
+    pytest.param("pycsw.core.repository", "setup", id="dotted path import from pycsw"),
+    pytest.param(__file__, "test_programmatic_import", id="filesystem path import"),
+])
+def test_programmatic_import(import_path, expected_attribute):
+    imported_module = util.programmatic_import(import_path)
+    assert getattr(imported_module, expected_attribute)
+
+
+@pytest.mark.parametrize("invalid_import_path", [
+    "dummy",
+    "dummy.submodule",
+    "/non-existent/path",
+    str(Path(__file__).parent / "invalid_path"),
+])
+def test_programmatic_import_with_invalid_path(invalid_import_path):
+    result = util.programmatic_import(invalid_import_path)
+    assert result is None
+
+
+def test_sanitize_url():
+    result = util.sanitize_db_connect("postgresql://username:password@localhost/pycsw")
+    assert result == "postgresql://***:***@localhost/pycsw"
+
+
+def test_str2bool():
+    assert util.str2bool('true')
+    assert util.str2bool(True)
+    assert util.str2bool('1')
+    assert util.str2bool('yes')
+    assert util.str2bool('on')
+    assert not util.str2bool('0')
+    assert not util.str2bool('false')
+    assert not util.str2bool(False)
+    assert not util.str2bool('off')
+    assert not util.str2bool('no')
+
+
+@pytest.mark.parametrize("geometry,expected", [
+    ({
+        'type': 'Point',
+        'coordinates': [102.0, 0.5]
+     }, '102.0,0.5,102.0,0.5'), ({
+         'type': 'LineString',
+         'coordinates': [
+             [102.0, 0.0],
+             [103.0, 1.0],
+             [104.0, 0.0],
+             [105.0, 1.0]
+         ]
+      }, '102.0,0.0,105.0,1.0'), ({
+         'type': 'Polygon',
+         'coordinates': [[
+             [100.0, 0.0],
+             [101.0, 0.0],
+             [101.0, 1.0],
+             [100.0, 1.0],
+             [100.0, 0.0]
+         ]]
+      }, '100.0,0.0,101.0,1.0'), ({
+         'type': 'MultiPolygon',
+         'coordinates': [[[
+             [30.0, 20.0],
+             [45.0, 40.0],
+             [10.0, 40.0],
+             [30.0, 20.0]
+         ]], [[
+             [15.0, 5.0],
+             [40.0, 10.0],
+             [10.0, 20.0],
+             [5.0, 10.0],
+             [15.0, 5.0]
+         ]]]
+      }, '5.0,5.0,45.0,40.0'), ({
+         'type': 'MultiPoint',
+         'coordinates': [
+             [10.0, 40.0],
+             [40.0, 30.0],
+             [20.0, 20.0],
+             [30.0, 10.0]
+         ]
+      }, '10.0,10.0,40.0,40.0')
+])
+def test_geojson_geometry2bbox(geometry, expected):
+    bounds = util.geojson_geometry2bbox(geometry)
+    assert bounds == expected

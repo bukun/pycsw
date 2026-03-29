@@ -4,7 +4,7 @@
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #          Angelos Tzotsos <tzotsos@gmail.com>
 #
-# Copyright (c) 2015 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 # Copyright (c) 2015 Angelos Tzotsos
 #
 # Permission is hereby granted, free of charge, to any person
@@ -31,7 +31,6 @@
 # =================================================================
 
 import logging
-from urllib.parse import urlencode
 
 from pycsw.core import util
 from pycsw.core.etree import etree
@@ -42,6 +41,8 @@ QUERY_PARAMETERS = [
     'q',
     'bbox',
     'time',
+    'start',
+    'stop',
     'eo:parentidentifier',
     'eo:processinglevel',
     'eo:producttype',
@@ -53,7 +54,8 @@ QUERY_PARAMETERS = [
     'eo:spectralrange',
     'eo:bands',
     'eo:orbitnumber',
-    'eo:orbitdirection'
+    'eo:orbitdirection',
+    'eo:illuminationelevationangle'
 ]
 
 
@@ -93,7 +95,7 @@ class OpenSearch(object):
 
         self.exml = element
         self.cfg = cfg
-        self.bind_url = util.bind_url(self.cfg.get('server', 'url'))
+        self.bind_url = util.bind_url(self.cfg['server'].get('url'))
         if self.bind_url.endswith(('/opensearch', '/opensearch?')):
             self.bind_url = self.bind_url.replace('/opensearch', '/csw')
 
@@ -116,10 +118,9 @@ class OpenSearch(object):
             node = etree.Element(util.nspath_eval('atom:feed',
                        self.context.namespaces), nsmap=self.namespaces)
             etree.SubElement(node, util.nspath_eval('atom:id',
-                       self.context.namespaces)).text = self.cfg.get('server', 'url')
+                       self.context.namespaces)).text = self.cfg['server'].get('url')
             etree.SubElement(node, util.nspath_eval('atom:title',
-                       self.context.namespaces)).text = self.cfg.get('metadata:main',
-                       'identification_title')
+                       self.context.namespaces)).text = self.cfg['metadata']['identification']['title']
             #etree.SubElement(node, util.nspath_eval('atom:updated',
             #  self.context.namespaces)).text = self.exml.xpath('//@timestamp')[0]
 
@@ -134,9 +135,11 @@ class OpenSearch(object):
 
             for rec in self.exml.xpath('//atom:entry',
                         namespaces=self.context.namespaces):
+                LOGGER.debug('Adding Atom entry')
                 node.append(rec)
             for rec in self.exml.xpath('//csw:Record|//csw:BriefRecord|//csw:SummaryRecord',
                         namespaces=self.context.namespaces):
+                LOGGER.debug('Converting CSW Record to Atom entry')
                 node.append(self.cswrecord2atom(rec))
         elif operation_name == 'Capabilities':
             node = etree.Element(util.nspath_eval('os:OpenSearchDescription', self.namespaces), nsmap=self.namespaces)
@@ -174,12 +177,13 @@ class OpenSearch(object):
                 'eo:productType': '{eo:productType?}',
                 'eo:sensorType': '{eo:sensorType?}',
                 'eo:snowCover': '{eo:snowCover?}',
-                'eo:spectralRange': '{eo:spectralRange?}'
+                'eo:spectralRange': '{eo:spectralRange?}',
+                'eo:illuminationElevationAngle': '{eo:illuminationElevationAngle?}'
             }
 
             node1.set('template', '%s%s' % (self.bind_url,
-                '&'.join('{}={}'.format(*i) for i in kvps.items())))
-
+                '&'.join([f'{k}={v}' for k, v in kvps.items()]))
+            )
 
             #node1.set('template', '%smode=opensearch&service=CSW&version=2.0.2&request=GetRecords&elementsetname=full&typenames=csw:Record&resulttype=results&q={searchTerms?}&bbox={geo:box?}&time={time:start?}/{time:end?}&start={time:start?}&stop={time:end?}&startposition={startIndex?}&maxrecords={count?}' % self.bind_url)
 
@@ -213,13 +217,11 @@ class OpenSearch(object):
             node = etree.Element(util.nspath_eval('atom:feed',
                        self.context.namespaces), nsmap=self.namespaces)
             etree.SubElement(node, util.nspath_eval('atom:id',
-                       self.context.namespaces)).text = self.cfg.get('server', 'url')
+                       self.context.namespaces)).text = self.cfg['server'].get('url')
             etree.SubElement(node, util.nspath_eval('atom:title',
-                       self.context.namespaces)).text = self.cfg.get('metadata:main',
-                       'identification_title')
+                       self.context.namespaces)).text = self.cfg['metadata']['identification']['title']
             author = etree.SubElement(node, util.nspath_eval('atom:author', self.context.namespaces))
-            etree.SubElement(author, util.nspath_eval('atom:name', self.context.namespaces)).text = self.cfg.get('metadata:main',
-                       'provider_name')
+            etree.SubElement(author, util.nspath_eval('atom:name', self.context.namespaces)).text = self.cfg['metadata']['provider']['name']
             etree.SubElement(node, util.nspath_eval('atom:link',
                        self.context.namespaces), rel='search',
                            type='application/opensearchdescription+xml',
@@ -242,10 +244,11 @@ class OpenSearch(object):
             etree.SubElement(node, util.nspath_eval('os:itemsPerPage', self.context.namespaces)).text = str(returned)
 
             for rec in self.exml.xpath('//atom:entry', namespaces=self.context.namespaces):
-                LOGGER.debug('ADDING ATOM ENTRY')
+                LOGGER.debug('Adding Atom entry')
                 node.append(rec)
 
             for rec in self.exml.xpath('//csw30:Record|//csw30:BriefRecord|//csw30:SummaryRecord', namespaces=self.context.namespaces):
+                LOGGER.debug('Converting CSW Record to Atom entry')
                 node.append(self.cswrecord2atom(rec))
 
         elif response_name == 'Capabilities':
@@ -285,11 +288,12 @@ class OpenSearch(object):
                 'eo:productType': '{eo:productType?}',
                 'eo:sensorType': '{eo:sensorType?}',
                 'eo:snowCover': '{eo:snowCover?}',
-                'eo:spectralRange': '{eo:spectralRange?}'
+                'eo:spectralRange': '{eo:spectralRange?}',
+                'eo:illuminationElevationAngle': '{eo:illuminationElevationAngle?}'
             }
 
             node1.set('template', '%s%s' % (self.bind_url,
-                '&'.join('{}={}'.format(*i) for i in kvps.items())))
+                '&'.join(f'{k}={v}' for k, v in kvps.items())))
 
             # Requirement-023
             node1 = etree.SubElement(node, util.nspath_eval('os:Url', self.namespaces))
@@ -299,7 +303,7 @@ class OpenSearch(object):
             kvps['mode'] = 'opensearch'
 
             node1.set('template', '%s%s' % (self.bind_url,
-                '&'.join('{}={}'.format(*i) for i in kvps.items())))
+                '&'.join(f'{k}={v}' for k, v in kvps.items())))
 
             node1 = etree.SubElement(node, util.nspath_eval('os:Image', self.namespaces))
             node1.set('type', 'image/vnd.microsoft.icon')
@@ -318,10 +322,9 @@ class OpenSearch(object):
             node = etree.Element(util.nspath_eval('atom:feed',
                        self.context.namespaces), nsmap=self.namespaces)
             etree.SubElement(node, util.nspath_eval('atom:id',
-                       self.context.namespaces)).text = self.cfg.get('server', 'url')
+                       self.context.namespaces)).text = self.cfg['server'].get('url')
             etree.SubElement(node, util.nspath_eval('atom:title',
-                       self.context.namespaces)).text = self.cfg.get('metadata:main',
-                       'identification_title')
+                       self.context.namespaces)).text = self.cfg['metadata']['identification']['title']
             #etree.SubElement(node, util.nspath_eval('atom:updated',
             #  self.context.namespaces)).text = self.exml.xpath('//@timestamp')[0]
 
@@ -381,6 +384,7 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
     time_element = None
     anytext_elements = []
     query_temporal_by_iso = False
+    start_stop_elements_only = False
 
     eo_parentidentifier_element = None
     eo_bands_element = None
@@ -393,6 +397,7 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
     eo_producttype_element = None
     eo_sensortype_element = None
     eo_snowcover_element = None
+    eo_illuminationelevationangle_element = None
 
     if profiles is not None and 'plugins' in profiles and 'APISO' in profiles['plugins']:
         query_temporal_by_iso = True
@@ -470,6 +475,7 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
             anytext_elements.append(anytext_element)
 
     if ('start' in kvp or 'stop' in kvp) and 'time' not in kvp:
+        start_stop_elements_only = True
         LOGGER.debug('Detected start/stop in KVP')
         kvp['time'] = ''
         if 'start' in kvp and kvp['start'] != '':
@@ -479,7 +485,7 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
                 kvp['time'] += kvp['stop']
             else:
                 kvp['time'] = '/' + kvp['stop']
-            LOGGER.debug('new KVP time: {}'.format(kvp['time']))
+            LOGGER.debug(f'new KVP time: {kvp["time"]}')
 
     # time to FilterXML
     if 'time' in kvp and kvp['time'] != '':
@@ -587,6 +593,9 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
             errortext = 'Exception: OpenSearch time not valid: %s.' % str(kvp['time'])
             LOGGER.error(errortext)
 
+    if time_element is not None and start_stop_elements_only:
+        par_count += 1
+
     LOGGER.debug('Processing EO queryables')
     if not util.is_none_or_empty(kvp.get('eo:parentidentifier')):
         par_count += 1
@@ -660,6 +669,15 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
         etree.SubElement(eo_bands_element, util.nspath_eval(
             'ogc:Literal', context.namespaces)).text = '*%s*' % kvp['eo:spectralrange']
 
+    if not util.is_none_or_empty(kvp.get('eo:illuminationelevationangle')):
+        par_count += 1
+        eo_illuminationelevationangle_element = etree.Element(util.nspath_eval('ogc:PropertyIsLike', context.namespaces),
+            matchCase='false', wildCard='*', singleChar='?', escapeChar='\\')
+        etree.SubElement(eo_illuminationelevationangle_element,
+           util.nspath_eval('ogc:PropertyName', context.namespaces)).text = 'apiso:IlluminationElevationAngle'
+        etree.SubElement(eo_illuminationelevationangle_element, util.nspath_eval(
+            'ogc:Literal', context.namespaces)).text = '*%s*' % kvp['eo:illuminationelevationangle']
+
     if not util.is_none_or_empty(kvp.get('eo:orbitnumber')):
         par_count += 1
         eo_orbitnumber_element = etree.Element(util.nspath_eval('ogc:PropertyIsLike', context.namespaces),
@@ -715,17 +733,21 @@ def kvp2filterxml(kvp, context, profiles, fes_version='1.0'):
     for eo_element in [eo_producttype_element, eo_platform_element, eo_instrument_element,
                        eo_sensortype_element, eo_cloudcover_element, eo_snowcover_element,
                        eo_bands_element, eo_orbitnumber_element, eo_orbitdirection_element,
-                       eo_processinglevel_element, eo_parentidentifier_element]:
+                       eo_processinglevel_element, eo_parentidentifier_element, eo_illuminationelevationangle_element]:
         if eo_element is not None:
             node_to_append.append(eo_element)
 
     # Render etree to string XML
-    LOGGER.debug(etree.tostring(root, encoding='unicode'))
     filterstring = etree.tostring(root, encoding='unicode')
     if fes_version == '2.0':
         filterstring = filterstring.replace('PropertyName', 'ValueReference')\
                                    .replace('xmlns:ogc="http://www.opengis.net/ogc"', 'xmlns:fes20="http://www.opengis.net/fes/2.0"')\
-                                   .replace('ogc:', 'fes20:')
+                                   .replace('ogc:', 'fes20:')\
+                                   .replace('xmlns:gml311="http://www.opengis.net/gml"', 'xmlns:gml32="http://www.opengis.net/gml/3.2"')\
+                                   .replace('gml311:', 'gml32:')
+
+    LOGGER.debug(filterstring)
+
     return filterstring
 
 
@@ -740,8 +762,8 @@ def evaluate_literal(context, pname, pvalue):
     :returns: lxml Element of predicate
     """
 
-    LOGGER.debug('property name: {}'.format(pname))
-    LOGGER.debug('property value: {}'.format(pvalue))
+    LOGGER.debug(f'property name: {pname}')
+    LOGGER.debug(f'property value: {pvalue}')
 
     if pvalue.startswith('{') and pvalue.endswith('}'):
         # {n1,n2,…} equals to field=n1 OR field=n2 OR …

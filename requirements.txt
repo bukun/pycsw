@@ -1,7 +1,10 @@
 click
 geolinks
+legacy-cgi; python_version >= '3.13'
 lxml
 OWSLib
-pyproj < 3.3.0
+pyproj
+python-dateutil
+PyYAML
 Shapely
 xmltodict

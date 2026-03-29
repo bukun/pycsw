@@ -4,7 +4,8 @@
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
 # Copyright (c) 2017 Ricardo Garcia Silva
-# Copyright (c) 2020 Tom Kralidis
+# Copyright (c) 2025 Tom Kralidis
+# Copyright (c) 2025 Angelos Tzotsos
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -33,22 +34,19 @@
 # This docker compose file demos how to use the pycsw docker image with a
 # PostgreSQL/PostGIS database.
 #
-# docker-compose usage:
+# docker compose usage:
 #
-# docker-compose up
+# docker compose up
 #
 # docker stack (in a docker swarm):
 #
 # PYCSW_DOCKER_IMAGE=2.1-dev docker stack deploy --compose-file docker-compose.yml pycsw
 #
 
-version: "3.8"
-
 services:
-
   db:
     container_name: db
-    image: postgis/postgis:12-3.0-alpine
+    image: postgis/postgis:17-3.5
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mypass
@@ -58,7 +56,8 @@ services:
       - db-data:/var/lib/postgresql/data/pgdata
     ports:
       - 5432:5432
-
+    networks:
+      - pycsw-net
   pycsw:
     container_name: pycsw
     image: geopython/pycsw:${PYCSW_DOCKER_IMAGE}
@@ -67,8 +66,12 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./pycsw.cfg:/etc/pycsw/pycsw.cfg
+      - ./pycsw.yml:/etc/pycsw/pycsw.yml
+    networks:
+      - pycsw-net
 
+networks:
+  pycsw-net:
 
 volumes:
   db-data:

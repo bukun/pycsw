@@ -4,7 +4,7 @@
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #          Angelos Tzotsos <tzotsos@gmail.com>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2025 Tom Kralidis
 # Copyright (c) 2021 Angelos Tzotsos
 #
 # Permission is hereby granted, free of charge, to any person
@@ -37,8 +37,11 @@ import json
 import logging
 import mimetypes
 import os
+import pathlib
 import re
+from typing import Union
 
+from dateutil.parser import parse as dparse
 from jinja2 import Environment, FileSystemLoader
 from jinja2.exceptions import TemplateNotFound
 import yaml
@@ -49,10 +52,8 @@ LOGGER = logging.getLogger(__name__)
 
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
-TEMPLATES = '{}{}templates'.format(os.path.dirname(
-    os.path.realpath(__file__)), os.sep)
-
-STATIC = '{}/static'.format(TEMPLATES)
+TEMPLATES = pathlib.Path(__file__).resolve().parent.parent.parent / 'templates'
+STATIC = TEMPLATES / 'static'
 
 mimetypes.add_type('text/plain', '.yaml')
 mimetypes.add_type('text/plain', '.yml')
@@ -82,12 +83,17 @@ def json_serial(obj):
     """
     helper function to convert to JSON non-default
     types (source: https://stackoverflow.com/a/22238613)
+
     :param obj: `object` to be evaluated
+
     :returns: JSON non-default type to `str`
     """
 
     if isinstance(obj, (datetime, date, time)):
-        return obj.isoformat()
+        if isinstance(obj, (datetime, time)):
+            return obj.strftime('%Y-%m-%dT%H:%M:%SZ')
+        else:  # date
+            return obj.strftime('%Y-%m-%d')
     elif isinstance(obj, bytes):
         try:
             LOGGER.debug('Returning as UTF-8 decoded bytes')
@@ -98,7 +104,7 @@ def json_serial(obj):
     elif isinstance(obj, Decimal):
         return float(obj)
 
-    msg = '{} type {} not serializable'.format(obj, type(obj))
+    msg = f'{obj} type {type(obj)} not serializable'
     LOGGER.error(msg)
     raise TypeError(msg)
 
@@ -140,6 +146,29 @@ def yaml_load(fh):
     return yaml.load(fh, Loader=EnvVarLoader)
 
 
+def yaml_dump(dict_: dict, destfile: str) -> bool:
+    """
+    Dump dict to YAML file
+
+    :param dict_: `dict` to dump
+    :param destfile: destination filepath
+
+    :returns: `bool`
+    """
+
+    def path_representer(dumper, data):
+        return dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data))
+
+    yaml.add_multi_representer(pathlib.PurePath, path_representer)
+
+    LOGGER.debug('Dumping YAML document')
+    with open(destfile, 'wb') as fh:
+        yaml.dump(dict_, fh, sort_keys=False, encoding='utf8', indent=4,
+                  default_flow_style=False)
+
+    return True
+
+
 def to_json(dict_, pretty=False):
     """
     Serialize dict to json
@@ -175,10 +204,10 @@ def render_j2_template(config, template, data):
         templates_path = config['server']['templates']['path']
         env = Environment(loader=FileSystemLoader(templates_path))
         custom_templates = True
-        LOGGER.debug('using custom templates: {}'.format(templates_path))
+        LOGGER.debug(f'using custom templates: {templates_path}')
     except (KeyError, TypeError):
         env = Environment(loader=FileSystemLoader(TEMPLATES))
-        LOGGER.debug('using default templates: {}'.format(TEMPLATES))
+        LOGGER.debug(f'using default templates: {TEMPLATES}')
 
     env.filters['to_json'] = to_json
     env.globals.update(to_json=to_json)
@@ -195,3 +224,28 @@ def render_j2_template(config, template, data):
             raise
 
     return template.render(config=config, data=data, version=__version__)
+
+
+def to_rfc3339(value: str) -> Union[tuple, None]:
+    """
+    Helper function to convert a date/datetime into
+    RFC3339
+
+    :param value: `str` of date/datetime value
+
+    :returns: `tuple` of `datetime` of RFC3339 value and date type
+    """
+
+    try:
+        dt = dparse(value)  # TODO TIMEZONE)
+    except Exception as err:
+        msg = f'Parse error: {err}'
+        LOGGER.error(msg)
+        return 'date', None
+
+    if len(value) < 11:
+        dt_type = 'date'
+    else:
+        dt_type = 'date-time'
+
+    return dt, dt_type

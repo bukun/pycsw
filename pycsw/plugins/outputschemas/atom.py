@@ -3,7 +3,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2015 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -28,7 +28,6 @@
 #
 # =================================================================
 
-import os
 from pycsw.core import util
 from pycsw.core.etree import etree
 
@@ -87,15 +86,14 @@ def write_record(result, esn, context, url=None):
         for link in util.jsonify_links(rlinks):
             url2 = etree.SubElement(node, util.nspath_eval('atom:link', NAMESPACES), href=link['url'])
 
-            if link['description']:
+            if link.get('description') is not None:
                 url2.attrib['title'] = link['description']
 
-            if link['protocol']:
-                if link['protocol'] == 'enclosure':
-                    url2.attrib['rel'] = link['protocol']
-                    url2.attrib['type'] = 'application/octet-stream'
-                else:
-                    url2.attrib['type'] = link['protocol']
+            if link.get('protocol') is not None:
+                url2.attrib['type'] = link['protocol']
+
+            if link.get('function') is not None:
+                url2.attrib['rel'] = link['function']
 
     etree.SubElement(node, util.nspath_eval('atom:link', NAMESPACES), href='%s?service=CSW&version=2.0.2&request=GetRepositoryItem&id=%s' % (url, util.getqattr(result, context.md_core_model['mappings']['pycsw:Identifier'])))
 
@@ -133,7 +131,8 @@ def write_extent(bbox, nsmap):
     if bbox is not None:
         try:
             bbox2 = util.wkt2geom(bbox)
-        except:
+        except Exception as err:
+            LOGGER.debug(f'Geometry parsing error: {err}')
             return None
         where = etree.Element(util.nspath_eval('georss:where', NAMESPACES))
         envelope = etree.SubElement(where, util.nspath_eval('gml:Envelope', nsmap), srsName='http://www.opengis.net/def/crs/EPSG/0/4326')

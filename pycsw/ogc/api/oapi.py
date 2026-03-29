@@ -2,7 +2,7 @@
 #
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #
-# Copyright (c) 2021 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -30,12 +30,14 @@
 from copy import deepcopy
 import logging
 
+from pycsw import __version__
+from pycsw.core.util import str2bool
 from pycsw.ogc.api.util import yaml_load
 
 LOGGER = logging.getLogger(__name__)
 
 
-def gen_oapi(config, oapi_filepath):
+def gen_oapi(config, oapi_filepath, mode='ogcapi-records'):
     """
     Genrate OpenAPI document
 
@@ -55,9 +57,72 @@ def gen_oapi(config, oapi_filepath):
         'name': 'Capabilities',
         'description': 'essential characteristics of this API'
         }, {
-        'name': 'Data',
-        'description': 'access to data (records)'
+        'name': 'Metadata',
+        'description': 'access to metadata (records)'
     }]
+
+    LOGGER.debug('Adding response components')
+    oapi['components']['responses']['Queryables'] = {
+        'content': {
+            'application/json': {
+                'schema': {
+                    '$ref': '#/components/schemas/queryables'
+                }
+            }
+        },
+        'description': 'successful queryables operation'
+    }
+    oapi['components']['schemas']['queryable'] = {
+        'properties': {
+            'description': {
+                'description': 'a human-readable narrative describing the queryable',  # noqa
+                'type': 'string'
+            },
+            'language': {
+                'default': [
+                    'en'
+                ],
+                'description': 'the language used for the title and description',  # noqa
+                'type': 'string'
+            },
+            'queryable': {
+                'description': 'the token that may be used in a CQL predicate',
+                'type': 'string'
+            },
+            'title': {
+                'description': 'a human readable title for the queryable',
+                'type': 'string'
+            },
+            'type': {
+                'description': 'the data type of the queryable',
+                'type': 'string'
+            },
+            'type-ref': {
+                'description': 'a reference to the formal definition of the type',  # noqa
+                'format': 'url',
+                'type': 'string'
+            }
+        },
+        'required': [
+            'queryable',
+            'type'
+        ],
+        'type': 'object'
+    }
+    oapi['components']['schemas']['queryables'] = {
+        'properties': {
+            'queryables': {
+                'items': {
+                    '$ref': '#/components/schemas/queryable'
+                },
+                'type': 'array'
+            }
+        },
+        'required': [
+            'queryables'
+        ],
+        'type': 'object'
+    }
 
     LOGGER.debug('Adding parameter components')
     oapi['components']['parameters']['f'] = {
@@ -92,26 +157,108 @@ def gen_oapi(config, oapi_filepath):
         'description': 'The optional filter parameter specifies a CQL2 expression to be used for enhanced filtering',  # noqa
         'required': False,
         'schema': {
-            'type': 'object',
+            'type': 'object'
         },
         'style': 'form',
         'explode': False
     }
+    oapi['components']['parameters']['filter-lang'] = {
+        'name': 'filter-lang',
+        'in': 'query',
+        'description': 'The optional filter-lang parameter specifies the predicate language of the filter being applied',  # noqa
+        'required': False,
+        'schema': {
+            'type': 'string',
+            'enum': [
+                'cql2-json',
+                'cql2-text'
+            ],
+            'default': 'cql2-text'
+        },
+        'style': 'form',
+        'explode': False
+    }
+    oapi['components']['parameters']['vendorSpecificParameters'] = {
+        'name': 'vendorSpecificParameters',
+        'in': 'query',
+        'description': 'Additional "free-form" parameters that are not explicitly defined',  # noqa
+        'schema': {
+            'type': 'object',
+            'additionalProperties': True
+        },
+        'style': 'form'
+    }
+    oapi['components']['parameters']['facets'] = {
+        'name': 'facets',
+        'in': 'query',
+        'description': 'Whether to include facets in results',
+        'schema': {
+            'type': 'boolean',
+            'default': False
+        },
+        'style': 'form',
+        'explode': False
+    }
+    oapi['components']['parameters']['distributed'] = {
+        'name': 'distributed',
+        'in': 'query',
+        'description': 'Whether to invoke distributed mode',
+        'schema': {
+            'type': 'boolean',
+            'default': False
+        },
+        'style': 'form',
+        'explode': False
+    }
+
+    # TODO: remove local definition of ids once implemented
+    # in OGC API - Records
+    oapi['components']['parameters']['ids'] = {
+        'name': 'ids',
+        'in': 'query',
+        'description': 'Comma-separated list of identifiers',
+        'required': False,
+        'schema': {
+            'type': 'array',
+            'items': {
+                'type': 'string'
+            }
+        },
+        'style': 'form',
+        'explode': False
+    }
+
+    if mode == 'stac-api':
+        oapi['components']['parameters']['collections'] = {
+            'name': 'collections',
+            'in': 'query',
+            'description': 'Comma-separated list of collection identifiers',
+            'required': False,
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'string'
+                }
+            },
+            'style': 'form',
+            'explode': False
+        }
+
     LOGGER.debug('Adding server info')
     oapi['info'] = {
         'contact': {
-            'email': config.get('metadata:main', 'contact_email'),
-            'name': config.get('metadata:main', 'contact_name'),
-            'url': config.get('metadata:main', 'contact_url')
+            'email': config['metadata']['contact']['email'],
+            'name': config['metadata']['contact']['name'],
+            'url': config['metadata']['contact']['url']
         },
-        'version': '1.0',
-        'title': config.get('metadata:main', 'identification_title'),
-        'description': config.get('metadata:main', 'identification_abstract')
+        'version': __version__,
+        'title': config['metadata']['identification']['title'],
+        'description': config['metadata']['identification']['description']
     }
 
     oapi['servers'] = [{
-        'url': config.get('server', 'url'),
-        'description': config.get('metadata:main', 'identification_abstract')
+        'url': config['server'].get('url'),
+        'description': config['metadata']['identification']['description']
     }]
 
     LOGGER.debug('Adding paths')
@@ -128,7 +275,7 @@ def gen_oapi(config, oapi_filepath):
             ],
             'responses': {
                 '200': {
-                    '$ref': '#/components/responses/LandingPage'
+                    '$ref': '#/components/responses/Queryables'
                 },
                 '500': {
                     '$ref': '#/components/responses/ServerError'
@@ -211,13 +358,48 @@ def gen_oapi(config, oapi_filepath):
 
     path = {
         'get': {
-            'tags': ['Data'],
+            'tags': ['Queryables'],
+            'summary': 'Queryables page',
+            'description': 'Queryables page',
+            'operationId': 'getQueryables',
+            'parameters': [
+                {'$ref': '#/components/parameters/f'}
+            ],
+            'responses': {
+                '200': {
+                    '$ref': '#/components/responses/Queryables'
+                },
+                '500': {
+                    '$ref': '#/components/responses/ServerError'
+                }
+            }
+        }
+    }
+
+    oapi['paths']['/queryables'] = path
+
+    path2 = deepcopy(path)
+
+    path2['get']['operationId'] = 'getCollectionQueryables'
+    path2['get']['parameters'].append(
+        {'$ref': '#/components/parameters/collectionId'})
+    path2['get']['responses']['404'] = {
+        '$ref': '#/components/responses/NotFound'
+    }
+
+    oapi['paths']['/collections/{collectionId}/queryables'] = path2
+    oapi['components']['parameters']['collectionId']['default'] = 'metadata:main'  # noqa
+
+    path = {
+        'get': {
+            'tags': ['metadata'],
             'summary': 'Records search items page',
             'description': 'Records search items page',
             'operationId': 'getRecords',
             'parameters': [
                 {'$ref': '#/components/parameters/collectionId'},
                 {'$ref': '#/components/parameters/bbox'},
+                {'$ref': '#/components/parameters/ids'},
                 {'$ref': '#/components/parameters/datetime'},
                 {'$ref': '#/components/parameters/limit'},
                 {'$ref': '#/components/parameters/q'},
@@ -225,8 +407,12 @@ def gen_oapi(config, oapi_filepath):
                 {'$ref': '#/components/parameters/externalId'},
                 {'$ref': '#/components/parameters/sortby'},
                 {'$ref': '#/components/parameters/filter'},
+                {'$ref': '#/components/parameters/filter-lang'},
                 {'$ref': '#/components/parameters/f'},
-                {'$ref': '#/components/parameters/offset'}
+                {'$ref': '#/components/parameters/offset'},
+                {'$ref': '#/components/parameters/facets'},
+                {'$ref': '#/components/parameters/distributed'},
+                {'$ref': '#/components/parameters/vendorSpecificParameters'}
             ],
             'responses': {
                 '200': {
@@ -245,24 +431,64 @@ def gen_oapi(config, oapi_filepath):
         }
     }
 
+    if str2bool(config['manager'].get('transactions', False)):
+        LOGGER.debug('Transactions enabled; adding post')
+
+        path['post'] = {
+            'summary': 'Adds Records items',
+            'description': 'Adds Records items',
+            'tags': ['metadata'],
+            'operationId': 'addRecord',
+            'consumes': [
+                'application/geo+json', 'application/json', 'application/xml'
+            ],
+            'produces': ['application/geo+json'],
+            'requestBody': {
+                'content': {
+                    'application/geo+json': {
+                        'schema': {}
+                    }
+                }
+            },
+            'parameters': [
+                {'$ref': '#/components/parameters/collectionId'}
+            ],
+            'responses': {
+                '201': {'description': 'Successful creation'},
+                '400': {
+                    '$ref': '#/components/responses/InvalidParameter'
+                },
+                '500': {
+                    '$ref': '#/components/responses/ServerError'
+                }
+            }
+        }
+
     oapi['paths']['/collections/{collectionId}/items'] = path
 
-    path2 = deepcopy(path)
-    path2['get']['operationId'] = 'searchRecords'
-    oapi['paths']['/search'] = path2
+    if mode == 'stac-api':
+        LOGGER.debug('Adding /stac/search')
+        path2 = deepcopy(path)
+        path2['get']['operationId'] = 'searchRecords'
+        oapi['paths']['/search'] = path2
+
+        oapi['paths']['/search']['get']['parameters'].append({
+            '$ref': '#/components/parameters/collections'
+        })
 
     f = deepcopy(oapi['components']['parameters']['f'])
     f['schema']['enum'].append('xml')
 
     path = {
         'get': {
-            'tags': ['Data'],
+            'tags': ['metadata'],
             'summary': 'Records item page',
             'description': 'Records item page',
             'operationId': 'getRecord',
             'parameters': [
                 {'$ref': '#/components/parameters/collectionId'},
                 {'$ref': '#/components/parameters/recordId'},
+                {'$ref': '#/components/parameters/distributed'},
                 f
             ],
             'responses': {
@@ -278,6 +504,61 @@ def gen_oapi(config, oapi_filepath):
             }
         }
     }
+
+    if str2bool(config['manager'].get('transactions', False)):
+        LOGGER.debug('Transactions enabled; adding put/delete')
+
+        path['put'] = {
+            'summary': 'Updates Records items',
+            'description': 'Updates Records items',
+            'tags': ['metadata'],
+            'operationId': 'updateRecord',
+            'consumes': [
+                'application/geo+json', 'application/json', 'application/xml'
+            ],
+            'produces': ['application/json'],
+            'requestBody': {
+                'content': {
+                    'application/geo+json': {
+                        'schema': {}
+                    }
+                }
+            },
+            'parameters': [
+                {'$ref': '#/components/parameters/collectionId'},
+                {'$ref': '#/components/parameters/recordId'}
+            ],
+            'responses': {
+                '204': {'description': 'Successful update'},
+                '400': {
+                    '$ref': '#/components/responses/InvalidParameter'
+                },
+                '500': {
+                    '$ref': '#/components/responses/ServerError'
+                }
+            }
+        }
+
+        path['delete'] = {
+            'summary': 'Deletes Records items',
+            'description': 'Deletes Records items',
+            'tags': ['metadata'],
+            'operationId': 'deleteRecord',
+            'produces': ['application/json'],
+            'parameters': [
+                {'$ref': '#/components/parameters/collectionId'},
+                {'$ref': '#/components/parameters/recordId'},
+            ],
+            'responses': {
+                '204': {'description': 'Successful delete'},
+                '400': {
+                    '$ref': '#/components/responses/InvalidParameter'
+                },
+                '500': {
+                    '$ref': '#/components/responses/ServerError'
+                }
+            }
+        }
 
     oapi['paths']['/collections/{collectionId}/items/{recordId}'] = path
 

@@ -4,6 +4,9 @@
 pycsw |release| Documentation
 =============================
 
+.. image:: https://zenodo.org/badge/2367090.svg
+   :target: https://zenodo.org/badge/latestdoi/2367090
+
 :Author: Tom Kralidis
 :Contact: tomkralidis at gmail.com
 :Release: |release|
@@ -17,8 +20,10 @@ pycsw |release| Documentation
    docker
    configuration
    administration
+   metadata-model-reference
    oarec-support
    csw-support
+   pubsub
    stac
    distributedsearching
    sru
@@ -32,6 +37,8 @@ pycsw |release| Documentation
    profiles
    repositories
    outputschemas
+   xslt
+   html-templating
    geonode
    hhypermap
    odc

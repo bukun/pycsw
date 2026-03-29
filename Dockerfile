@@ -9,8 +9,8 @@
 #
 # Copyright (c) 2020 Ricardo Garcia Silva
 # Copyright (c) 2020 Massimo Di Stefano
-# Copyright (c) 2020 Tom Kralidis
-# Copyright (c) 2020 Angelos Tzotsos
+# Copyright (c) 2025 Tom Kralidis
+# Copyright (c) 2026 Angelos Tzotsos
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -36,21 +36,21 @@
 #
 # =================================================================
 
-FROM python:3.8-slim-buster
-LABEL maintainer="massimods@met.no,aheimsbakk@met.no,tommkralidis@gmail.com"
+FROM python:3.12-slim-trixie
+LABEL maintainer="massimods@met.no,aheimsbakk@met.no,tommkralidis@gmail.com,gcpp.kalxas@gmail.com"
 
 # Build arguments
 # add "--build-arg BUILD_DEV_IMAGE=true" to Docker build command when building with test/doc tools
 
 ARG BUILD_DEV_IMAGE="false"
 
-RUN apt-get update && apt-get install --yes --allow-downgrades \
-        ca-certificates libexpat1=2.2.6-2+deb10u1 \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update --yes && \
+    apt-get install --yes --no-install-recommends ca-certificates python3-setuptools && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN adduser --uid 1000 --gecos '' --disabled-password pycsw
 
-ENV PYCSW_CONFIG=/etc/pycsw/pycsw.cfg
+ENV PYCSW_CONFIG=/etc/pycsw/pycsw.yml
 
 WORKDIR /home/pycsw/pycsw
 
@@ -63,19 +63,20 @@ COPY --chown=pycsw \
     requirements-dev.txt \
     ./
 
-RUN pip install -U pip && \
-    python3 -m pip install \
+RUN python3 -m venv /venv && \
+    /venv/bin/pip3 install -U pip setuptools && \
+    /venv/bin/pip3 install \
     --requirement requirements.txt \
     --requirement requirements-standalone.txt \
     psycopg2-binary gunicorn \
-    && if [ "$BUILD_DEV_IMAGE" = "true" ] ; then python3 -m pip install -r requirements-dev.txt; fi
+    && if [ "$BUILD_DEV_IMAGE" = "true" ] ; then /venv/bin/pip3 install -r requirements-dev.txt; fi
 
 COPY --chown=pycsw . .
 
-COPY docker/pycsw.cfg ${PYCSW_CONFIG}
+COPY docker/pycsw.yml ${PYCSW_CONFIG}
 COPY docker/entrypoint.py /usr/local/bin/entrypoint.py
 
-RUN python3 -m pip install --editable .
+RUN /venv/bin/pip3 install -e . --config-settings editable_mode=strict
 
 WORKDIR /home/pycsw
 
@@ -83,4 +84,4 @@ EXPOSE 8000
 
 USER pycsw
 
-ENTRYPOINT [ "python3", "/usr/local/bin/entrypoint.py" ]
+ENTRYPOINT [ "/venv/bin/python3", "/usr/local/bin/entrypoint.py" ]

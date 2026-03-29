@@ -6,8 +6,8 @@ OpenSearch Support
 pycsw OpenSearch support is enabled by default.  There are two ways to access OpenSearch
 depending on the deployment pattern chosen.
 
-OARec deployment
-----------------
+OGC API - Records deployment
+----------------------------
 
 .. code-block:: bash
 
@@ -59,6 +59,7 @@ Supported Query Parameters
 - ``eo:sensorType``
 - ``eo:snowCover``
 - ``eo:spectralRange``
+- ``eo:illuminationElevationAngle``
 
 Mapping of non-19115 Queryable Mappings
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

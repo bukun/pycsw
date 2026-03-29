@@ -13,6 +13,7 @@ pycsw requires the following Python supporting libraries:
 - `lxml`_ for XML support
 - `SQLAlchemy`_ for database bindings
 - `pyproj`_ for coordinate transformations
+- `PyYAML`_ for configuration management
 - `Shapely`_ for spatial query / geometry support
 - `OWSLib`_ for CSW client and metadata parser
 - `xmltodict`_ for working with XML similar to working with JSON
@@ -23,9 +24,8 @@ OGC API - Records
 
 OGC API - Records support additionally requires the following:
 
-- `Flask`_ for pycsw's default OARec endpoint
+- `Flask`_ for pycsw's default OGC API - Records endpoint
 - `pygeofilter`_ for CQL parsing
-- `PyYAML`_ for OpenAPI document handling
 
 .. note::
 
@@ -50,11 +50,11 @@ The 4 minute install:
   virtualenv pycsw && cd pycsw && . bin/activate
   git clone https://github.com/geopython/pycsw.git && cd pycsw
   pip3 install -e . && pip3 install -r requirements-standalone.txt
-  cp default-sample.cfg default.cfg
-  vi default.cfg
+  cp default-sample.yml default.yml
+  vi default.yml
   # adjust paths in
-  # - server.home
-  # - repository.database
+  # server.home
+  # repository.database
   # set server.url to http://localhost:8000/
   # start server - CSW 2/3, OAI-PMH, OpenSearch, SRU (all endpoints at /)
   python3 pycsw/wsgi.py
@@ -64,10 +64,14 @@ To enable OGC API - Records as well as the abovementioned search standards:
 
 .. code-block:: bash
 
-  # start server - OARec and all services (various endpoints below)
+  # configure which config file to use
+  export PYCSW_CONFIG=default.yml
+  # start server - OGC API - Records and all services (various endpoints below)
   python3 pycsw/wsgi_flask.py
   # OGC API - Records
-  curl http://localhost:8000/
+  curl http://localhost:8000
+  # OpenAPI document
+  curl http://localhost:8000/openapi
   # OGC CSW 3
   curl http://localhost:8000/csw
   # OGC CSW 2
@@ -196,14 +200,14 @@ For Windows installs, change the first line of ``csw.py`` to:
 Security
 --------
 
-By default, ``default.cfg`` is at the root of the pycsw install.  If pycsw is setup outside an HTTP server's ``cgi-bin`` area, this file could be read.  The following options protect the configuration:
+By default, ``default.yml`` is at the root of the pycsw install.  If pycsw is setup outside an HTTP server's ``cgi-bin`` area, this file could be read.  The following options protect the configuration:
 
-- move ``default.cfg`` to a non HTTP accessible area, and modify ``csw.py`` to point to the updated location
+- move ``default.yml`` to a non HTTP accessible area, and modify ``csw.py`` to point to the updated location
 - configure web server to deny access to the configuration.  For example, in Apache, add the following to ``httpd.conf``:
 
 .. code-block:: none
 
-  <Files ~ "\.(cfg)$">
+  <Files ~ "\.(yml)$">
    order allow,deny
    deny from all
   </Files>
@@ -217,9 +221,9 @@ WSGI mode, use ``pycsw/wsgi.py`` in your WSGI server environment.
 
 .. note::
 
-  ``mod_wsgi`` supports only the version of python it was compiled with. If the target server
-  already supports WSGI applications, pycsw will need to use the same python version.
-  `WSGIDaemonProcess`_ provides a ``python-path`` directive that may allow a virtualenv created from the python version ``mod_wsgi`` uses.
+  ``mod_wsgi`` supports only the version of Python it was compiled with. If the target server
+  already supports WSGI applications, pycsw will need to use the same Python version.
+  `WSGIDaemonProcess`_ provides a ``python-path`` directive that may allow a virtualenv created from the Python version ``mod_wsgi`` uses.
 
 Below is an example of configuring with Apache:
 

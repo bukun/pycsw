@@ -45,8 +45,8 @@
     <ows:Operation name="GetCapabilities">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="sections">
@@ -59,8 +59,8 @@
     <ows:Operation name="DescribeRecord">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="outputFormat">
@@ -80,8 +80,8 @@
     <ows:Operation name="GetDomain">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="ParameterName">
@@ -105,8 +105,8 @@
     <ows:Operation name="GetRecords">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="CONSTRAINTLANGUAGE">
@@ -123,6 +123,7 @@
         <ows:Value>application/xml</ows:Value>
       </ows:Parameter>
       <ows:Parameter name="outputSchema">
+        <ows:Value>http://datacite.org/schema/kernel-4</ows:Value>
         <ows:Value>http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/</ows:Value>
         <ows:Value>http://www.interlis.ch/INTERLIS2.3</ows:Value>
         <ows:Value>http://www.isotc211.org/2005/gmd</ows:Value>
@@ -146,6 +147,7 @@
         <ows:Value>apiso:Contributor</ows:Value>
         <ows:Value>apiso:Creator</ows:Value>
         <ows:Value>apiso:Degree</ows:Value>
+        <ows:Value>apiso:IlluminationElevationAngle</ows:Value>
         <ows:Value>apiso:Lineage</ows:Value>
         <ows:Value>apiso:OtherConstraints</ows:Value>
         <ows:Value>apiso:Publisher</ows:Value>
@@ -216,8 +218,8 @@
     <ows:Operation name="GetRecordById">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="ElementSetName">
@@ -230,6 +232,7 @@
         <ows:Value>application/xml</ows:Value>
       </ows:Parameter>
       <ows:Parameter name="outputSchema">
+        <ows:Value>http://datacite.org/schema/kernel-4</ows:Value>
         <ows:Value>http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/</ows:Value>
         <ows:Value>http://www.interlis.ch/INTERLIS2.3</ows:Value>
         <ows:Value>http://www.isotc211.org/2005/gmd</ows:Value>
@@ -241,14 +244,14 @@
     <ows:Operation name="GetRepositoryItem">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Get xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
     </ows:Operation>
     <ows:Operation name="Transaction">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="TransactionSchemas">
@@ -269,10 +272,11 @@
     <ows:Operation name="Harvest">
       <ows:DCP>
         <ows:HTTP>
-          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.cfg"/>
+          <ows:Post xlink:type="simple" xlink:href="http://localhost/pycsw/csw.py?config=tests/suites/harvesting/default.yml"/>
         </ows:HTTP>
       </ows:DCP>
       <ows:Parameter name="ResourceType">
+        <ows:Value>http://datacite.org/schema/kernel-4</ows:Value>
         <ows:Value>http://gcmd.gsfc.nasa.gov/Aboutus/xml/dif/</ows:Value>
         <ows:Value>http://www.interlis.ch/INTERLIS2.3</ows:Value>
         <ows:Value>http://www.isotc211.org/2005/gmd</ows:Value>

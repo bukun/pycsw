@@ -4,7 +4,7 @@
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #          Angelos Tzotsos <tzotsos@gmail.com>
 #
-# Copyright (c) 2016 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 # Copyright (c) 2015 Angelos Tzotsos
 # Copyright (c) 2016 James Dickens
 # Copyright (c) 2016 Ricardo Silva
@@ -36,7 +36,6 @@ import logging
 import os
 from urllib.parse import parse_qsl, urlparse
 from io import StringIO
-import configparser
 import sys
 from time import time
 import wsgiref.util
@@ -46,6 +45,7 @@ from pycsw import oaipmh, opensearch, sru
 from pycsw.plugins.profiles import profile as pprofile
 import pycsw.plugins.outputschemas
 from pycsw.core import config, log, util
+from pycsw.ogc.api.util import yaml_load
 from pycsw.ogc.csw import csw2, csw3
 
 LOGGER = logging.getLogger(__name__)
@@ -55,12 +55,8 @@ class Csw(object):
     """ Base CSW server """
     def __init__(self, rtconfig=None, env=None, version='3.0.0'):
         """ Initialize CSW """
-
-        if not env:
-            self.environ = os.environ
-        else:
-            self.environ = env
-
+        
+        self.environ = env or os.environ
         self.context = config.StaticContext()
 
         # Lazy load this when needed
@@ -88,6 +84,7 @@ class Csw(object):
         self.orm = 'django'
         self.language = {'639_code': 'en', 'text': 'english'}
         self.process_time_start = time()
+        self.xslts = []
 
         # define CSW implementation object (default CSW3)
         self.iface = csw3.Csw3(server_csw=self)
@@ -100,20 +97,11 @@ class Csw(object):
         # load user configuration
         try:
             LOGGER.info('Loading user configuration')
-            if isinstance(rtconfig, configparser.ConfigParser):  # serialized already
+            if isinstance(rtconfig, dict):  # dictionary
                 self.config = rtconfig
-            else:
-                self.config = configparser.ConfigParser(
-                    interpolation=util.EnvInterpolation())
-                if isinstance(rtconfig, dict):  # dictionary
-                    for section, options in rtconfig.items():
-                        self.config.add_section(section)
-                        for k, v in options.items():
-                            self.config.set(section, k, v)
-                else:  # configuration file
-                    import codecs
-                    with codecs.open(rtconfig, encoding='utf-8') as scp:
-                        self.config.read_file(scp)
+            else:  # configuration file
+                with open(rtconfig, encoding='utf8') as fh:
+                    self.config = yaml_load(fh)
         except Exception as err:
             msg = 'Could not load configuration'
             LOGGER.exception('%s %s: %s', msg, rtconfig, err)
@@ -123,57 +111,53 @@ class Csw(object):
 
         # set server.home safely
         # TODO: make this more abstract
-        self.config.set(
-            'server', 'home',
-            os.path.dirname(os.path.join(os.path.dirname(__file__), '..'))
-        )
+        self.config['server']['home'] = os.path.dirname(os.path.join(os.path.dirname(__file__), '..'))
 
-        if 'PYCSW_IS_CSW' in env and env['PYCSW_IS_CSW']:
-            self.config.set('server', 'url', self.config['server']['url'].rstrip('/') + '/csw')
-        if 'PYCSW_IS_OPENSEARCH' in env and env['PYCSW_IS_OPENSEARCH']:
-            self.config.set('server', 'url', self.config['server']['url'].rstrip('/') + '/opensearch')
+        if 'PYCSW_IS_CSW' in self.environ and self.environ['PYCSW_IS_CSW']:
+            self.config['server']['url'] = self.config['server']['url'].rstrip('/') + '/csw'
+        if 'PYCSW_IS_OPENSEARCH' in self.environ and self.environ['PYCSW_IS_OPENSEARCH']:
+            self.config['server']['url'] = self.config['server']['url'].rstrip('/') + '/opensearch'
             self.mode = 'opensearch'
 
-        self.context.pycsw_home = self.config.get('server', 'home')
-        self.context.url = self.config.get('server', 'url')
+        self.context.pycsw_home = self.config['server'].get('home')
+        self.context.url = self.config['server']['url']
 
-        log.setup_logger(self.config)
+        self.context.server = self
+
+        log.setup_logger(self.config.get('logging', {}))
 
         LOGGER.info('running configuration %s', rtconfig)
         LOGGER.debug('QUERY_STRING: %s', self.environ['QUERY_STRING'])
 
         # set OGC schemas location
-        if not self.config.has_option('server', 'ogc_schemas_base'):
-            self.config.set('server', 'ogc_schemas_base',
-                            self.context.ogc_schemas_base)
+        if 'ogc_schemas_base' not in self.config['server']:
+            self.config['server']['ogc_schemas_base'] = self.context.ogc_schemas_base
 
         # set mimetype
-        if self.config.has_option('server', 'mimetype'):
-            self.mimetype = self.config.get('server', 'mimetype').encode()
+        if 'mimetype' in self.config['server']:
+            self.mimetype = self.config['server']['mimetype'].encode()
 
         # set encoding
-        if self.config.has_option('server', 'encoding'):
-            self.encoding = self.config.get('server', 'encoding')
+        if 'encoding' in self.config['server']:
+            self.encoding = self.config['server']['encoding']
 
         # set domainquerytype
-        if self.config.has_option('server', 'domainquerytype'):
-            self.domainquerytype = self.config.get('server', 'domainquerytype')
+        if 'domainquerytype' in self.config['server']:
+            self.domainquerytype = self.config['server']['domainquerytype']
 
         # set XML pretty print
-        if (self.config.has_option('server', 'pretty_print') and
-                self.config.get('server', 'pretty_print') == 'true'):
+        if self.config['server'].get('pretty_print', False):
             self.pretty_print = 1
 
         # set Spatial Ranking option
-        if (self.config.has_option('server', 'spatial_ranking') and
-                self.config.get('server', 'spatial_ranking') == 'true'):
+        if self.config['server'].get('spatial_ranking', False):
             util.ranking_enabled = True
 
         # set language default
-        if self.config.has_option('server', 'language'):
+        if 'language' in self.config['server']:
             try:
                 LOGGER.info('Setting language')
-                lang_code = self.config.get('server', 'language').split('-')[0]
+                lang_code = self.config['server']['language'].split('-')[0]
                 self.language['639_code'] = lang_code
                 self.language['text'] = self.context.languages[lang_code]
             except Exception as err:
@@ -184,32 +168,20 @@ class Csw(object):
         LOGGER.debug('Model: %s.', self.context.model)
 
         # load user-defined mappings if they exist
-        if self.config.has_option('repository', 'mappings'):
-            # override default repository mappings
-            try:
-                import imp
-                module = self.config.get('repository', 'mappings')
-                if os.sep in module:  # filepath
-                    modulename = '%s' % os.path.splitext(module)[0].replace(
-                        os.sep, '.')
-                    mappings = imp.load_source(modulename, module)
-                else:  # dotted name
-                    mappings = __import__(module, fromlist=[''])
-                LOGGER.info('Loading custom repository mappings '
-                             'from %s', module)
-                self.context.md_core_model = mappings.MD_CORE_MODEL
-                self.context.refresh_dc(mappings.MD_CORE_MODEL)
-            except Exception as err:
-                LOGGER.exception('Could not load custom mappings: %s', err)
+        custom_mappings_path = self.config['repository'].get('mappings')
+        if custom_mappings_path is not None:
+            md_core_model = util.load_custom_repo_mappings(custom_mappings_path)
+            if md_core_model is not None:
+                self.context.md_core_model = md_core_model
+                self.context.refresh_dc(md_core_model)
+            else:
+                LOGGER.exception('Could not load custom mappings: %s')
                 self.response = self.iface.exceptionreport(
                     'NoApplicableCode', 'service',
                     'Could not load repository.mappings')
 
         # load user-defined max attempt to retry db connection
-        try:
-            self.max_retries = int(self.config.get("repository", "max_retries"))
-        except configparser.NoOptionError:
-            self.max_retries = 5
+        self.max_retries = int(self.config['repository'].get('max_retries', 5))
 
         # load outputschemas
         LOGGER.info('Loading outputschemas')
@@ -222,6 +194,17 @@ class Csw(object):
 
         LOGGER.debug('Outputschemas loaded: %s.', self.outputschemas)
         LOGGER.debug('Namespaces: %s', self.context.namespaces)
+
+        LOGGER.info('Loading XSLT transformations')
+
+        for x in self.config.get('xslt', []):
+            LOGGER.debug('Loading XSLT %s' % x['transform'])
+            input_os = x['input_os']
+            output_os = x['output_os']
+            self.xslts.append({
+                f'xslt:{input_os},{output_os}': x['transform']
+            })
+        # TODO: add output schemas to namespace prefixes
 
     def expand_path(self, path):
         """ return safe path for WSGI environments """
@@ -303,10 +286,10 @@ class Csw(object):
                 self.request_version = '3.0.0'
 
         if 'PYCSW_IS_OAIPMH' in self.environ and self.environ['PYCSW_IS_OAIPMH']:
-            self.config.set('server', 'url', self.config['server']['url'].rstrip('/') + '/oaipmh')
+            self.config['server']['url'] = self.config['server']['url'].rstrip('/') + '/oaipmh'
             self.kvp['mode'] = 'oaipmh'
         if 'PYCSW_IS_SRU' in self.environ and self.environ['PYCSW_IS_SRU']:
-            self.config.set('server', 'url', self.config['server']['url'].rstrip('/') + '/sru')
+            self.config['server']['url'] = self.config['server']['url'].rstrip('/') + '/sru'
             self.kvp['mode'] = 'sru'
 
         if (not isinstance(self.kvp, str) and 'mode' in self.kvp and
@@ -340,13 +323,12 @@ class Csw(object):
             ops['GetDomain'] = self.context.gen_domains()
 
         # generate distributed search model, if specified in config
-        if self.config.has_option('server', 'federatedcatalogues'):
+        if 'federatedcatalogues' in self.config:
             LOGGER.info('Configuring distributed search')
 
             constraints['FederatedCatalogues'] = {'values': []}
 
-            for fedcat in self.config.get('server',
-                                          'federatedcatalogues').split(','):
+            for fedcat in self.config['federatedcatalogues']:
                 LOGGER.debug('federated catalogue: %s', fedcat)
                 constraints['FederatedCatalogues']['values'].append(fedcat)
 
@@ -363,16 +345,16 @@ class Csw(object):
                     value.NAMESPACE)
 
         LOGGER.info('Setting MaxRecordDefault')
-        if self.config.has_option('server', 'maxrecords'):
+        if 'maxrecords' in self.config['server']:
             constraints['MaxRecordDefault']['values'] = [
-                self.config.get('server', 'maxrecords')]
+                self.config['server']['maxrecords']]
 
         # load profiles
-        if self.config.has_option('server', 'profiles'):
+        if 'profiles' in self.config:
             self.profiles = pprofile.load_profiles(
                 os.path.join('pycsw', 'plugins', 'profiles'),
                 pprofile.Profile,
-                self.config.get('server', 'profiles')
+                self.config['profiles']
             )
 
             for prof in self.profiles['plugins'].keys():
@@ -390,15 +372,13 @@ class Csw(object):
 
         # init repository
         # look for tablename, set 'records' as default
-        if not self.config.has_option('repository', 'table'):
-            self.config.set('repository', 'table', 'records')
+        if 'table' not in self.config['repository']:
+            self.config['repository']['table'] = 'records'
 
-        repo_filter = None
-        if self.config.has_option('repository', 'filter'):
-            repo_filter = self.config.get('repository', 'filter')
+        repo_filter = self.config['repository'].get('filter')
 
-        if self.config.has_option('repository', 'source'):  # load custom repository
-            rs = self.config.get('repository', 'source')
+        if 'source' in self.config['repository']:  # load custom repository
+            rs = self.config['repository']['source']
             rs_modname, rs_clsname = rs.rsplit('.', 1)
 
             rs_mod = __import__(rs_modname, globals(), locals(), [rs_clsname])
@@ -412,8 +392,8 @@ class Csw(object):
                         self.repository = rs_cls(self.context, repo_filter)
                         LOGGER.debug('Custom repository %s loaded (%s)', rs, self.repository.dbtype)
                         connection_done = True
-                    except:
-                        LOGGER.debug(f'Repository not loaded retry connection {max_attempts}')
+                    except Exception as err:
+                        LOGGER.debug(f'Repository not loaded retry connection {max_attempts}: {err}')
                         max_attempts += 1
             except Exception as err:
                 msg = 'Could not load custom repository %s: %s' % (rs, err)
@@ -433,17 +413,18 @@ class Csw(object):
                 while not connection_done and max_attempts <= self.max_retries:
                     try:
                         self.repository = repository.Repository(
-                            self.config.get('repository', 'database'),
+                            self.config['repository']['database'],
                             self.context,
                             self.environ.get('local.app_root', None),
-                            self.config.get('repository', 'table'),
-                            repo_filter
+                            self.config['repository'].get('table'),
+                            repo_filter,
+                            self.config['repository'].get('stable_sort', False)
                         )
                         LOGGER.debug(
                             'Repository loaded (local): %s.' % self.repository.dbtype)
                         connection_done = True
-                    except:
-                        LOGGER.debug(f'Repository not loaded retry connection {max_attempts}')
+                    except Exception as err:
+                        LOGGER.debug(f'Repository not loaded retry connection {max_attempts}: {err}')
                         max_attempts += 1
             except Exception as err:
                 msg = 'Could not load repository (local): %s' % err
@@ -627,7 +608,7 @@ class Csw(object):
             LOGGER.info('OAI-PMH mode detected; processing response.')
             self.response = self.oaipmh().response(
                 self.response, self.oaiargs, self.repository,
-                self.config.get('server', 'url')
+                self.config['server']['url']
             )
 
         return self._write_response()
@@ -765,8 +746,7 @@ class Csw(object):
 
     def _gen_manager(self):
         """ Update self.context.model with CSW-T advertising """
-        if (self.config.has_option('manager', 'transactions') and
-                self.config.get('manager', 'transactions') == 'true'):
+        if util.str2bool(self.config['manager'].get('transactions', False)):
 
             self.manager = True
 
@@ -808,27 +788,22 @@ class Csw(object):
                 }
             }
 
-            self.csw_harvest_pagesize = 10
-            if self.config.has_option('manager', 'csw_harvest_pagesize'):
-                self.csw_harvest_pagesize = int(
-                    self.config.get('manager', 'csw_harvest_pagesize'))
+            self.csw_harvest_pagesize = int(self.config['manager'].get('csw_harvest_pagesize', 10))
 
     def _test_manager(self):
         """ Verify that transactions are allowed """
 
-        if self.config.get('manager', 'transactions') != 'true':
+        if not util.str2bool(self.config['manager'].get('transactions', False)):
             raise RuntimeError('CSW-T interface is disabled')
 
-        """ get the client first forwarded ip """
+        # get the client first forwarded ip
         if 'HTTP_X_FORWARDED_FOR' in self.environ:
             ipaddress = self.environ['HTTP_X_FORWARDED_FOR'].split(',')[0].strip()
         else:
             ipaddress = self.environ['REMOTE_ADDR']
 
-        if not self.config.has_option('manager', 'allowed_ips') or \
-        (self.config.has_option('manager', 'allowed_ips') and not
-         util.ipaddress_in_whitelist(ipaddress,
-                        self.config.get('manager', 'allowed_ips').split(','))):
+        if 'allowed_ips' not in self.config['manager'] or not \
+            util.ipaddress_in_whitelist(ipaddress, self.config['manager'].get('allowed_ips', [])):
             raise RuntimeError(
             'CSW-T operations not allowed for this IP address: %s' % ipaddress)
 
@@ -840,7 +815,8 @@ class Csw(object):
             for key in mappings.keys():
                 try:
                     cql = cql.replace(key, mappings[key]['dbcol'])
-                except:
+                except KeyError:
+                    LOGGER.debug('Setting without dbcol key')
                     cql = cql.replace(key, mappings[key])
             LOGGER.debug('Interpolated CQL text = %s.', cql)
             return cql
@@ -860,39 +836,88 @@ class Csw(object):
                 LOGGER.debug('Email detected')
 
                 smtp_host = 'localhost'
-                if self.config.has_option('server', 'smtp_host'):
-                    smtp_host = self.config.get('server', 'smtp_host')
+                smtp_user = ''
+                smtp_pass = ''
+                smtp_ssl = False
+                if 'smtp_host' in self.config['server']:
+                    smtp_host = self.config['server']['smtp_host']
+
+                if 'smtp_user' in self.config['server']:
+                    smtp_user = self.config['server']['smtp_user']
+
+                if 'smtp_pass' in self.config['server']:
+                    smtp_pass = self.config['server']['smtp_pass']
+
+                if 'smtp_ssl' in self.config['server']:
+                    smtp_ssl = self.config['server'].get('smtp_ssl', False)
 
                 body = ('Subject: pycsw %s results\n\n%s' %
                         (self.kvp['request'], xml))
 
                 try:
                     LOGGER.info('Sending email')
-                    msg = smtplib.SMTP(smtp_host)
+                    if smtp_ssl:
+                        msg = smtplib.SMTP_SSL(smtp_host, port=smtplib.SMTP_SSL_PORT)
+                        msg.login(smtp_user, smtp_pass)
+                    else:
+                        msg = smtplib.SMTP(smtp_host)
+
                     msg.sendmail(
-                        self.config.get('metadata:main', 'contact_email'),
-                        uprh.path, body
-                    )
+                        self.config['metadata']['contact']['email'],
+                        uprh.path, body)
                     msg.quit()
                     LOGGER.debug('Email sent successfully.')
                 except Exception as err:
                     LOGGER.exception('Error processing email')
 
-            elif uprh.scheme == 'ftp':
+            elif uprh.scheme in ['ftp', 'ftps']:
                 import ftplib
 
-                LOGGER.debug('FTP detected.')
+                LOGGER.debug(f'{uprh.scheme} detected.')
 
                 try:
-                    LOGGER.info('Sending to FTP server.')
-                    ftp = ftplib.FTP(uprh.hostname)
+                    LOGGER.info(f'Sending to {uprh.scheme} server.')
+                    if uprh.scheme == 'ftps':
+                        ftp = ftplib.FTP_TLS(uprh.hostname)
+                    else:
+                        ftp = ftplib.FTP(uprh.hostname)
                     if uprh.username is not None:
                         ftp.login(uprh.username, uprh.password)
+                    if uprh.scheme == 'ftps':
+                        ftp.prot_p()
                     ftp.storbinary('STOR %s' % uprh.path[1:], StringIO(xml))
                     ftp.quit()
-                    LOGGER.debug('FTP sent successfully.')
+                    LOGGER.debug(f'{uprh.scheme} sent successfully.')
                 except Exception as err:
-                    LOGGER.exception('Error processing FTP')
+                    LOGGER.exception(f'Error processing {uprh.scheme}')
+
+    def _render_xslt(self, res):
+        ''' Validate and render XSLT '''
+
+        LOGGER.debug('Rendering XSLT')
+        try: 
+            input_os = res.schema
+            output_os = self.kvp['outputschema']
+
+            xslt_id = 'xslt:%s,%s' % (input_os, output_os)
+            xslt_dict = next(d for i, d in enumerate(self.xslts) if xslt_id in d)
+
+            LOGGER.debug('XSLT ID: %s' % xslt_id)
+            LOGGER.debug('Found matching XSLT transformation')
+
+            xslt = xslt_dict[xslt_id]
+
+            transform = etree.XSLT(etree.parse(xslt))
+            doc = etree.fromstring(res.xml, self.context.parser)
+            result_tree = transform(doc).getroot()
+            return result_tree
+        except StopIteration:
+            LOGGER.debug('No matching XSLT found')
+            pass 
+        except Exception as err: 
+            LOGGER.warning('XSLT transformation failed: %s' % str(err))
+            raise RuntimeError()
+
 
     @staticmethod
     def normalize_kvp(kvp):

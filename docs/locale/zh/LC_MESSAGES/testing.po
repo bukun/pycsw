@@ -119,9 +119,9 @@ msgstr ""
 
 #: ../../testing.rst:66
 msgid ""
-"A mandatory ``default.cfg`` file with the pycsw configuration that must be used "
+"A mandatory ``default.yml`` file with the pycsw configuration that must be used "
 "by the test suite;"
-msgstr "测试套件必须使用的带有 pycsw 配置的强制 ``default.cfg`` 文件；"
+msgstr "测试套件必须使用的带有 pycsw 配置的强制 ``default.yml`` 文件；"
 
 #: ../../testing.rst:69
 msgid ""
@@ -263,8 +263,8 @@ msgid ""
 msgstr "在 ``tests/functionaltests/suites`` （如 ``foo`` )下创建一个新目录"
 
 #: ../../testing.rst:141
-msgid "Create a new configuration in ``tests/suites/foo/default.cfg``"
-msgstr "在 ``tests/suites/foo/default.cfg`` 创建一个新的配置"
+msgid "Create a new configuration in ``tests/suites/foo/default.yml``"
+msgstr "在 ``tests/suites/foo/default.yml`` 创建一个新的配置"
 
 #: ../../testing.rst:142
 msgid "Populate HTTP POST requests in ``tests/suites/foo/post``"
@@ -544,12 +544,6 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ msgstr "本地运行"
 
 #~ msgid ""
-#~ "The tests framework can be run from ``tests`` using `Paver`_ (see ``pavement."
-#~ "py``) tasks for convenience:"
-#~ msgstr ""
-#~ "为方便工作，测试框架可以用 `Paver`_ (见 ``pavement.py``) 在 ``tests`` 中运行："
-
-#~ msgid ""
 #~ "The tests perform HTTP GET and POST requests against ``http://"
 #~ "localhost:8000``.  The expected output for each test can be found in "
 #~ "``expected``.  Results are categorized as ``passed``, ``failed``, or "
@@ -566,12 +560,12 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ "If a given test has failed, the output is saved in ``results``.  The "
 #~ "resulting failure can be analyzed by running ``diff tests/expected/"
 #~ "name_of_test.xml tests/results/name_of_test.xml`` to find variances.  The "
-#~ "Paver task returns a status code which indicates the number of tests which "
+#~ "task returns a status code which indicates the number of tests which "
 #~ "have failed (i.e. ``echo $?``)."
 #~ msgstr ""
 #~ "如果某个测试失败，输出将保存在``结果``中。 运行``diff tests/expected/"
 #~ "name_of_test.xml tests/results/name_of_test.xml`` ，会自动统计失败结果以找到差"
-#~ "异。Paver任务会返回一个状态代码，表示已失败的测试数目（即``echo $?``）。"
+#~ "异。任务会返回一个状态代码，表示已失败的测试数目（即``echo $?``）。"
 
 #~ msgid "Test Suites"
 #~ msgstr "测试套件"
@@ -584,8 +578,8 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ "测试框架将针对一系列“套件”（在``测试/ suites``）完成运行，其中每一项均指定一个"
 #~ "给定的配置，以测试基本代码的各种功能。每个套件的结构如下："
 
-#~ msgid "``tests/suites/suite/default.cfg``: the configuration for the suite"
-#~ msgstr "`tests/suites/suite/default.cfg`：对于该套件的配置"
+#~ msgid "``tests/suites/suite/default.yml``: the configuration for the suite"
+#~ msgstr "`tests/suites/suite/default.yml`：对于该套件的配置"
 
 #~ msgid ""
 #~ "``tests/suites/suite/post``: directory of XML documents for HTTP POST requests"
@@ -608,8 +602,8 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ msgid "When the tests are invoked, the following operations are run:"
 #~ msgstr "当测试被调用，将执行以下操作："
 
-#~ msgid "pycsw configuration is set to ``tests/suites/suite/default.cfg``"
-#~ msgstr "pycsw配置设置为`tests/suites/suite/default.cfg`"
+#~ msgid "pycsw configuration is set to ``tests/suites/suite/default.yml``"
+#~ msgstr "pycsw配置设置为`tests/suites/suite/default.yml`"
 
 #~ msgid "HTTP POST requests are run against ``tests/suites/suite/post/*.xml``"
 #~ msgstr "HTTP POST请求是针对 `tests/suites/suite/post/*.xml` 运行的"
@@ -631,9 +625,6 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ "文件的名称内）。该 ``request`` 值是HTTP GET请求的值。该 ``PYCSW_SERVER`` 在"
 #~ "URL pycsw安装运行时会被替换掉的。"
 
-#~ msgid "run ``paver test``"
-#~ msgstr "运行`paver test`"
-
 #~ msgid "Ensure that all file paths are relative to ``path/to/pycsw``"
 #~ msgstr "确保所有文件的路径都关联 ``path/to/pycsw`` "
 
@@ -645,11 +636,6 @@ msgstr "导航到 ``http://host/path/to/pycsw/tests/index.html`` 。"
 #~ "确保 ``repository.database`` 指定于 ``tests/suites/foo/data/records.db`` 的一"
 #~ "个sqlite3数据库。该数据库*必须*被写为 ``records.db``，目录 ``tests/suites/foo/"
 #~ "data`` 也必须存在"
-
-#~ msgid ""
-#~ "run ``paver test`` (or ``paver test -s foo`` to test only the new test suite)"
-#~ msgstr ""
-#~ "运行 ``paver test`` （或 ``paver test-s foo`` ， 仅用来测试新的测试套件）"
 
 #~ msgid ""
 #~ "Pycsw uses `pytest`_ for managing its automated tests. There are a number of "

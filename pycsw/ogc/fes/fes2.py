@@ -4,7 +4,7 @@
 # Authors: Tom Kralidis <tomkralidis@gmail.com>
 #          Angelos Tzotsos <tzotsos@gmail.com>
 #
-# Copyright (c) 2015 Tom Kralidis
+# Copyright (c) 2024 Tom Kralidis
 # Copyright (c) 2015 Angelos Tzotsos
 #
 # Permission is hereby granted, free of charge, to any person
@@ -34,7 +34,7 @@ import logging
 
 from pycsw.core import util
 from pycsw.core.etree import etree
-from pycsw.ogc.gml import gml3
+from pycsw.ogc.gml import gml32
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ MODEL = {
         ]
     },
     'GeometryOperands': {
-        'values': gml3.TYPES
+        'values': gml32.TYPES
     },
     'SpatialOperators': {
         'values': ['BBOX', 'Beyond', 'Contains', 'Crosses', 'Disjoint',
@@ -188,8 +188,10 @@ def parse(element, queryables, dbtype, nsmap, orm='sqlalchemy', language='englis
             upper_boundary = elem.find(
                 util.nspath_eval('fes20:UpperBoundary/fes20:Literal',
                                  nsmap)).text
+
             expression = "%s %s %s and %s" % \
                            (pname, com_op, assign_param(), assign_param())
+
             values.append(lower_boundary)
             values.append(upper_boundary)
         else:
@@ -221,6 +223,7 @@ def parse(element, queryables, dbtype, nsmap, orm='sqlalchemy', language='englis
                                   (anytext, language, assign_param()))
                 else:
                     LOGGER.debug('PostgreSQL non-FTS specific search')
+
                     expression = "%s is null or not %s %s %s" % \
                                    (pname, pname, com_op, assign_param())
             else:
@@ -233,12 +236,12 @@ def parse(element, queryables, dbtype, nsmap, orm='sqlalchemy', language='englis
                                   (language, assign_param()))
                 else:
                     LOGGER.debug('PostgreSQL non-FTS specific search')
+
                     expression = "%s %s %s" % (pname, com_op, assign_param())
 
         return expression
 
     queries = []
-    queries_nested = []
     values = []
 
     LOGGER.debug('Scanning children elements')
@@ -303,8 +306,10 @@ def parse(element, queryables, dbtype, nsmap, orm='sqlalchemy', language='englis
             tagname = ' %s ' % child_tag_name.lower()
             if tagname in [' or ', ' and ']:  # this is a nested binary logic query
                 LOGGER.debug('Nested binary logic detected; operator=%s', tagname)
+                queries_nested = []
                 for child2 in child.xpath('child::*'):
                     queries_nested.append(_get_comparison_expression(child2))
+                LOGGER.debug('Nested binary logic queries: %s', queries_nested)
                 queries.append('(%s)' % tagname.join(queries_nested))
             else:
                 queries.append(_get_comparison_expression(child))
@@ -331,7 +336,7 @@ def _get_spatial_operator(geomattr, element, dbtype, nsmap, postgis_geometry_col
         raise RuntimeError('Invalid fes20:ValueReference in spatial filter: %s' %
                            property_name.text)
 
-    geometry = gml3.Geometry(element, nsmap)
+    geometry = gml32.Geometry(element, nsmap)
 
     #make decision to apply spatial ranking to results
     set_spatial_ranking(geometry)
@@ -417,7 +422,6 @@ def set_spatial_ranking(geometry):
             util.ranking_pass = True
             util.ranking_query_geometry = geometry.wkt
         elif geometry.type in ['LineString', 'Point']:
-            from shapely.geometry.base import BaseGeometry
             from shapely.geometry import box
             from shapely.wkt import loads,dumps
             ls = loads(geometry.wkt)
